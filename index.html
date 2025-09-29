@@ -4,20 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PictoPlan - Secuencias Diarias y Emociones</title>
-    <!-- Carga de Tailwind CSS para un diseño limpio y responsivo (Mobile-First) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Configuración de la fuente Inter -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Fondo muy suave */
+            background-color: #f0f4f8;
         }
         .app-container {
             min-height: 100vh;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
-        /* Estilos base para los Pictogramas de Secuencias (Modo A) */
         .filled-drop-zone {
             border: 2px solid #3b82f6; 
             background-color: #dbeafe;
@@ -27,27 +24,20 @@
         .filled-drop-zone:active {
              transform: scale(0.99);
         }
-        
-        /* Resaltado del elemento seleccionado para intercambio (AMARILLO) */
         .selected-picto {
             border: 4px solid #f59e0b !important; 
             background-color: #fffbeb !important;
             box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
             transform: scale(1.02);
         }
-        
-        /* FEEDBACK VISUAL: Posición Correcta (VERDE) */
         .picto-correct {
             border: 4px solid #059669 !important; 
             background-color: #d1fae5 !important; 
         }
-        /* FEEDBACK VISUAL: Posición Incorrecta (ROJO) */
         .picto-incorrect {
             border: 4px solid #ef4444 !important; 
             background-color: #fee2e2 !important; 
         }
-
-        /* Estilo para el selector para que se vea bien en móvil */
         #routine-selector {
             appearance: none;
             background-color: #ffffff;
@@ -58,14 +48,11 @@
             color: #1f2937;
             text-align: center;
         }
-
-        /* Estilos para el Modo B: Botones de Emoción */
         .emotion-option {
             background-color: #ffffff;
             border: 2px solid #a8a29e;
             transition: all 0.2s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            /* Min-altura para buen toque con emoji y texto */
             min-height: 120px; 
             padding-top: 16px; 
             padding-bottom: 16px;
@@ -78,25 +65,20 @@
         .emotion-option:active {
             transform: scale(0.98);
         }
-        /* Color para la emoción primaria/más acertada (Verde fuerte) */
         .emotion-primary {
             border: 4px solid #059669 !important; 
             background-color: #d1fae5 !important;
             box-shadow: 0 0 15px #059669;
         }
-        /* Color para la emoción secundaria/cercana (Verde suave/Lima) */
         .emotion-secondary {
             border: 4px solid #84cc16 !important; 
             background-color: #f0fdf4 !important;
             box-shadow: 0 0 10px #84cc16;
         }
-        /* Color para la respuesta incorrecta (Rojo) */
         .emotion-incorrect {
             border: 4px solid #ef4444 !important; 
             background-color: #fee2e2 !important;
         }
-        
-        /* Estilo para el loader en Modo B */
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #fb7185;
@@ -105,8 +87,6 @@
             height: 30px;
             animation: spin 1s linear infinite;
         }
-        
-        /* Contenedor del Escenario - Ahora es clickeable */
         #scenario-output-box {
             cursor: pointer;
             transition: transform 0.1s ease-in-out;
@@ -114,30 +94,6 @@
         #scenario-output-box:active {
             transform: scale(0.99);
         }
-        
-        /* Indicador de Audio */
-        .audio-indicator {
-            position: absolute;
-            top: 0;
-            right: 0;
-            margin: 8px;
-            padding: 4px 8px;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 10;
-        }
-        
-        .loading-ring {
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            width: 14px;
-            height: 14px;
-            animation: spin 1s linear infinite;
-        }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -145,18 +101,11 @@
     </style>
 </head>
 <body>
-
-<!-- Contenedor Principal de la App (Diseño responsivo, optimizado para móvil) -->
 <div class="app-container mx-auto flex flex-col items-center w-full">
-
-    <!-- Encabezado con información simplificada (Fecha y Estado de Sesión/Desarrollador) -->
     <header class="w-full p-4 bg-blue-600 text-white rounded-b-xl shadow-lg">
         <h1 class="text-2xl font-extrabold text-center">PictoPlan</h1>
-        <!-- Mostrará Fecha y Estado de Sesión/Desarrollador -->
-        <p id="auth-status" class="text-sm text-center mt-1 opacity-90 font-medium">Desarrollado por: Jason Dafnis)</p>
+        <p id="auth-status" class="text-sm text-center mt-1 opacity-90 font-medium">Desarrollado por: Jason Dafnis</p>
     </header>
-
-    <!-- Selector de Modos (Pestañas) -->
     <div class="w-full flex justify-center bg-white shadow-md p-2">
         <button id="mode-a-button" class="flex-1 py-2 px-4 text-sm font-bold rounded-l-xl transition-colors border-b-4 border-blue-600 text-blue-600">
             1. Secuencias Diarias
@@ -165,17 +114,11 @@
             2. Detective Emocional
         </button>
     </div>
-
-    <!-- MAIN APP CONTENT -->
     <main class="flex flex-col flex-grow w-full p-4 space-y-4">
-        
-        <!-- Área de Mensajes (No es alert, es UI) -->
         <div id="message-box" class="p-3 text-center rounded-xl font-semibold hidden transition-all"></div>
 
-        <!-- === MODO A: Secuencias Diarias (Visible por defecto) === -->
+        <!-- MODO A -->
         <div id="mode-a-content" class="w-full flex flex-col space-y-4">
-            
-            <!-- Selector de Rutinas -->
             <div class="flex flex-col items-center space-y-2">
                 <label for="routine-selector" class="text-md font-semibold text-gray-700">Selecciona la Rutina (20 opciones):</label>
                 <select id="routine-selector" class="w-full max-w-sm">
@@ -201,332 +144,384 @@
                     <option value="homework_start">20. Empezar Tarea (4 Pasos)</option>
                 </select>
             </div>
-
-            <!-- Título de la Rutina Actualizado con JS -->
             <h2 id="routine-title" class="text-xl font-semibold text-gray-700 text-center mt-4"></h2>
-            
             <p class="text-sm text-gray-500 text-center font-medium">
                 Haz clic en un pictograma para escucharlo. Haz clic en otro para intercambiar su orden.
             </p>
-
-            <!-- Zona de Reordenamiento -->
-            <div id="drop-targets" class="flex flex-col space-y-3">
-                <!-- Los pictogramas desordenados se generarán con JS aquí -->
-            </div>
-
-            <!-- Botón de Verificación -->
-            <button id="check-button" 
-                    class="w-full py-4 text-white text-xl font-bold bg-green-500 hover:bg-green-600 rounded-2xl transition-all shadow-lg active:scale-[0.98]">
+            <div id="drop-targets" class="flex flex-col space-y-3"></div>
+            <button id="check-button" class="w-full py-4 text-white text-xl font-bold bg-green-500 hover:bg-green-600 rounded-2xl transition-all shadow-lg active:scale-[0.98]">
                 Verificar Secuencia
             </button>
         </div>
 
-        <!-- === MODO B: Detective Emocional (Oculto por defecto) === -->
+        <!-- MODO B -->
         <div id="mode-b-content" class="w-full flex flex-col space-y-6 hidden">
-            
             <h2 class="text-2xl font-bold text-center text-pink-600">Detective Emocional 🧠</h2>
             <p class="text-base text-gray-600 text-center">
                 Lee el escenario y elige el pictograma de la emoción correcta. ¡Haz clic en el recuadro amarillo para escucharlo de nuevo!
             </p>
-            
-            <!-- Display de Puntuación Local -->
             <div class="p-3 bg-indigo-100 rounded-xl shadow-md border border-indigo-400 text-center">
                 <p class="text-sm font-medium text-indigo-700">Puntuación Local:</p>
                 <p id="local-score-display" class="text-2xl font-extrabold text-indigo-900">0 Puntos</p>
             </div>
-
-            <!-- Escenario Objetivo (Desafío) - AHORA ES CLICKEABLE -->
             <div id="scenario-output-box"
                  class="p-6 bg-yellow-100 rounded-xl shadow-inner border-2 border-yellow-400 flex flex-col items-center space-y-4 min-h-[150px] justify-center relative">
-                
-                <!-- Indicador de Carga/Reproducción de Audio -->
-                <div id="audio-indicator" class="audio-indicator bg-yellow-500 text-white hidden items-center">
-                    <div id="audio-loading-ring" class="loading-ring mr-2"></div>
-                    <span id="audio-status-text">Cargando Audio...</span>
-                </div>
-                
                 <p id="target-scenario-text" class="text-lg p-3 font-semibold text-gray-700 text-center italic w-full">Cargando escenario...</p>
                 <div id="scenario-loader" class="loader"></div>
             </div>
-
-            <!-- Opciones de Respuesta -->
-            <div id="emotion-options-grid" class="grid grid-cols-2 gap-4">
-                <!-- Los botones de opción se generarán con JS aquí (EMOJI + NOMBRE) -->
-            </div>
-
-            <!-- Botón de Siguiente Desafío -->
-            <button id="next-emotion-button" 
-                    class="w-full py-4 text-white text-xl font-bold bg-pink-500 hover:bg-pink-600 rounded-2xl transition-all shadow-lg active:scale-[0.98]">
+            <div id="emotion-options-grid" class="grid grid-cols-2 gap-4"></div>
+            <button id="next-emotion-button" class="w-full py-4 text-white text-xl font-bold bg-pink-500 hover:bg-pink-600 rounded-2xl transition-all shadow-lg active:scale-[0.98]">
                 Siguiente Desafío
             </button>
         </div>
-
     </main>
 </div>
 
-<!-- Scripts de Lógica del Juego con LocalStorage y Gemini API -->
 <script type="module">
-    // --- CONFIGURACIÓN DE API Y GLOBALES ---
-    const apiKey = ""; // API Key para la llamada a Gemini
-    const TEXT_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-    const TTS_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-    const VOICE_NAME = "Kore"; // Voz consistente para todos los modos, como solicitaste.
+    // 🔑 TU API KEY REAL (¡NO LA COMPARTAS!)
+    const apiKey = "AIzaSyA9fRfC-z7WOUrwsL1Xl2gqaiAOtNFGNcc";
+    const TEXT_API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-    const today = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
-    let currentMode = 'A'; 
-    
-    // PUNTUACIÓN: +3 para primaria, +1 para secundaria (emociones cercanas)
-    const PRIMARY_SCORE = 3; 
+    // Variables globales
+    let currentMode = 'A';
+    let isLocked = false;
+    let emotionScore = 0;
+    const LOCAL_STORAGE_KEY = 'PictoPlanScore';
+    const PRIMARY_SCORE = 3;
     const SECONDARY_SCORE = 1;
-    let isPlaying = false;
-    let audioContext = null;
-    let audioSource = null;
 
-    // --- ELEMENTOS DEL DOM ---
+    // DOM Elements
     const modeAButton = document.getElementById('mode-a-button');
     const modeBButton = document.getElementById('mode-b-button');
     const modeAContent = document.getElementById('mode-a-content');
     const modeBContent = document.getElementById('mode-b-content');
     const messageBox = document.getElementById('message-box');
     const authStatusEl = document.getElementById('auth-status');
-    authStatusEl.innerHTML = `Fecha: ${today} | Desarrollado por: Jason Dafnis`;
-
-    // --- MODO A: Secuencias Diarias --- 
     const dropTargetsEl = document.getElementById('drop-targets');
     const routineTitleEl = document.getElementById('routine-title');
     const routineSelectorEl = document.getElementById('routine-selector');
     const checkButton = document.getElementById('check-button');
-    let currentSequence = []; 
-    let currentCorrectSequence = []; 
-    let selectedPictoIndex = null; 
-    let validationStatus = []; 
-
-    // --- MODO B: Detective Emocional ---
-    const scenarioOutputBox = document.getElementById('scenario-output-box'); 
-    const targetScenarioText = document.getElementById('target-scenario-text'); 
-    const scenarioLoader = document.getElementById('scenario-loader'); 
+    const scenarioOutputBox = document.getElementById('scenario-output-box');
+    const targetScenarioText = document.getElementById('target-scenario-text');
+    const scenarioLoader = document.getElementById('scenario-loader');
     const emotionOptionsGrid = document.getElementById('emotion-options-grid');
     const nextEmotionButton = document.getElementById('next-emotion-button');
-    const localScoreDisplay = document.getElementById('local-score-display'); 
-    const audioIndicator = document.getElementById('audio-indicator');
-    const audioStatusText = document.getElementById('audio-status-text');
-    const audioLoadingRing = document.getElementById('audio-loading-ring');
-    
-    let currentTargetResponse = null; 
-    let isLocked = false; 
-    
-    // Variables de Puntuación Local
-    let emotionScore = 0;
-    const LOCAL_STORAGE_KEY = 'PictoPlanScore';
+    const localScoreDisplay = document.getElementById('local-score-display');
 
-    // --- 1. LÓGICA DE PUNTUACIÓN LOCAL ---
-    
+    const today = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+    authStatusEl.innerHTML = `Fecha: ${today} | Desarrollado por: Jason Dafnis`;
+
+    // === TTS con Web Speech API (sin API key, funciona en Chrome/Edge/Safari) ===
+    function speakText(text) {
+        if (!text || typeof speechSynthesis === 'undefined') return;
+        speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-ES';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.0;
+
+        const voices = speechSynthesis.getVoices();
+        const spanishVoice = voices.find(v => v.lang.startsWith('es-ES'));
+        if (spanishVoice) utterance.voice = spanishVoice;
+
+        speechSynthesis.speak(utterance);
+    }
+
+    // Cargar voces al inicio
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = () => {};
+    }
+
+    // === UTILS ===
+    function shuffleArray(array) {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+    }
+
+    function showMessage(text, classes) {
+        messageBox.innerHTML = text;
+        messageBox.className = `p-3 text-center rounded-xl font-bold transition-all ${classes}`;
+        messageBox.classList.remove('hidden');
+        setTimeout(() => messageBox.classList.add('hidden'), 8000);
+    }
+
+    // === DATOS ===
+    const ROUTINES_DATA = { /* ... (igual que en tu código original) ... */ };
+    const EMOTION_DATA = [ /* ... (igual que en tu código original) ... */ ];
+
+    // === MODO A ===
+    let currentSequence = [];
+    let currentCorrectSequence = [];
+    let selectedPictoIndex = null;
+    let validationStatus = [];
+
+    function renderSequence() {
+        dropTargetsEl.innerHTML = '';
+        currentSequence.forEach((item, index) => {
+            const target = document.createElement('div');
+            let classes = 'filled-drop-zone p-4 flex items-center h-24 font-bold transition-all shadow-sm ';
+            if (index === selectedPictoIndex) classes += ' selected-picto';
+            else if (validationStatus[index] === 'correct') classes += ' picto-correct';
+            else if (validationStatus[index] === 'incorrect') classes += ' picto-incorrect';
+            target.className = classes + ' w-full';
+            target.innerHTML = `<span class="text-3xl font-extrabold mr-4">${index + 1}.</span> 
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-5xl">${item.emoji}</span>
+                                    <span class="text-lg font-bold text-gray-800">${item.text}</span>
+                                </div>`;
+            target.addEventListener('click', () => {
+                speakText(item.text);
+                handleTargetClick(index);
+            });
+            dropTargetsEl.appendChild(target);
+        });
+    }
+
+    function handleTargetClick(clickedIndex) {
+        validationStatus = [];
+        if (selectedPictoIndex === null) {
+            selectedPictoIndex = clickedIndex;
+            showMessage('Pictograma seleccionado. ¡Haz clic en otro para intercambiar!', 'bg-yellow-100 text-yellow-800');
+            renderSequence();
+        } else {
+            if (selectedPictoIndex === clickedIndex) {
+                selectedPictoIndex = null;
+                showMessage('Selección cancelada.', 'bg-gray-200 text-gray-700');
+            } else {
+                [currentSequence[selectedPictoIndex], currentSequence[clickedIndex]] = [currentSequence[clickedIndex], currentSequence[selectedPictoIndex]];
+                selectedPictoIndex = null;
+                showMessage('¡Intercambio realizado! Revisa el orden.', 'bg-green-100 text-green-800');
+            }
+            renderSequence();
+        }
+    }
+
+    function loadRoutine(routineKey) {
+        const routineData = ROUTINES_DATA[routineKey];
+        if (!routineData) return;
+        routineTitleEl.textContent = routineData.title;
+        currentCorrectSequence = routineData.sequence;
+        currentSequence = shuffleArray(routineData.sequence);
+        selectedPictoIndex = null;
+        validationStatus = [];
+        renderSequence();
+        messageBox.classList.add('hidden');
+    }
+
+    function checkSequence() {
+        if (selectedPictoIndex !== null) {
+            showMessage('Debes deseleccionar o completar el intercambio antes de verificar.', 'bg-yellow-100 text-yellow-800');
+            return;
+        }
+        const correctValues = currentCorrectSequence.map(item => item.value);
+        let allCorrect = true;
+        validationStatus = [];
+        for (let i = 0; i < currentSequence.length; i++) {
+            if (currentSequence[i].value !== correctValues[i]) {
+                allCorrect = false;
+                validationStatus[i] = 'incorrect';
+            } else {
+                validationStatus[i] = 'correct';
+            }
+        }
+        if (allCorrect) {
+            const msg = '¡Felicidades! 🎉 La secuencia es COMPLETAMENTE CORRECTA. ¡Excelente trabajo!';
+            showMessage(msg, 'bg-emerald-100 text-emerald-800');
+            speakText('Felicidades! La secuencia es completamente correcta. ¡Excelente trabajo!');
+            setTimeout(() => {
+                const keys = Object.keys(ROUTINES_DATA);
+                const idx = keys.indexOf(routineSelectorEl.value);
+                const next = keys[(idx + 1) % keys.length];
+                routineSelectorEl.value = next;
+                loadRoutine(next);
+            }, 3000);
+        } else {
+            const msg = 'Aún no es correcto. 🧐 Revisa los pasos marcados en rojo e intenta intercambiarlos.';
+            showMessage(msg, 'bg-rose-100 text-rose-800');
+            speakText('Aún no es correcto. Revisa los pasos marcados en rojo e intenta intercambiarlos.');
+        }
+        renderSequence();
+    }
+
+    // === MODO B ===
+    let currentTargetResponse = null;
+
+    async function requestNewScenario() {
+        scenarioLoader.classList.remove('hidden');
+        targetScenarioText.textContent = 'Cargando un nuevo escenario emocional...';
+        isLocked = true;
+        try {
+            const prompt = `Actúa como un psicólogo infantil experto en autismo y crea un escenario breve y realista (máximo 40 palabras) donde un niño o niña experimenta una emoción clara. La emoción DEBE ser una de las siguientes: Feliz, Triste, Enojado, Asustado, Calmado, Sorprendido, Pensativo, Aburrido, Avergonzado, Orgulloso, Decepción, Nervioso. 
+            Devuelve la respuesta como un objeto JSON estricto con la siguiente estructura:
+            {
+              "scenario": "Descripción del escenario.",
+              "primary_emotion": "Emoción principal que experimenta el niño (de la lista proporcionada).",
+              "secondary_emotions": ["Emoción secundaria o cercana (de la lista)"]
+            }`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            };
+            const res = await fetch(TEXT_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) throw new Error(`API error: ${res.status}`);
+            const data = await res.json();
+            const jsonText = data.candidates[0].content.parts[0].text;
+            const parsed = JSON.parse(jsonText);
+            currentTargetResponse = parsed;
+            targetScenarioText.textContent = parsed.scenario;
+            scenarioLoader.classList.add('hidden');
+            isLocked = false;
+            generateEmotionOptions(parsed.primary_emotion);
+            speakText(parsed.scenario);
+        } catch (error) {
+            console.error("Error:", error);
+            targetScenarioText.textContent = '❌ Error al cargar el desafío. Intenta de nuevo.';
+            scenarioLoader.classList.add('hidden');
+            isLocked = true;
+        }
+    }
+
+    function generateEmotionOptions(correctName) {
+        emotionOptionsGrid.innerHTML = '';
+        const correct = EMOTION_DATA.find(e => e.name === correctName);
+        if (!correct) return;
+        const incorrects = EMOTION_DATA.filter(e => e.name !== correctName);
+        const selectedIncorrect = shuffleArray(incorrects).slice(0, 3);
+        const options = shuffleArray([...selectedIncorrect, correct]);
+        options.forEach(emotion => {
+            const btn = document.createElement('button');
+            btn.className = 'emotion-option rounded-xl active:scale-[0.98] transition-transform';
+            btn.innerHTML = `<span class="text-5xl">${emotion.emoji}</span><span class="block mt-2 text-lg font-bold">${emotion.name}</span>`;
+            btn.addEventListener('click', () => handleEmotionSelection(emotion.name, btn));
+            emotionOptionsGrid.appendChild(btn);
+        });
+        nextEmotionButton.disabled = true;
+    }
+
+    function handleEmotionSelection(name, btn) {
+        if (isLocked) return;
+        isLocked = true;
+        document.querySelectorAll('.emotion-option').forEach(b => b.disabled = true);
+        const correct = currentTargetResponse.primary_emotion;
+        const secondary = currentTargetResponse.secondary_emotions || [];
+        let feedback = '', score = 0;
+        if (name === correct) {
+            btn.classList.add('emotion-primary');
+            score = PRIMARY_SCORE;
+            feedback = `¡Súper! 🌟 La emoción principal era ${correct}. Ganaste ${score} puntos.`;
+        } else if (secondary.includes(name)) {
+            btn.classList.add('emotion-secondary');
+            score = SECONDARY_SCORE;
+            feedback = `¡Bien! 👍 ${name} es una emoción cercana a la principal (${correct}). Ganaste ${score} punto.`;
+        } else {
+            btn.classList.add('emotion-incorrect');
+            document.querySelectorAll('.emotion-option').forEach(b => {
+                if (b.textContent.includes(correct)) b.classList.add('emotion-primary');
+            });
+            feedback = `Incorrecto. 😔 La emoción principal era ${correct}. Sigue practicando.`;
+        }
+        emotionScore += score;
+        localStorage.setItem(LOCAL_STORAGE_KEY, emotionScore.toString());
+        updateScoreDisplay();
+        showMessage(feedback, score > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800');
+        speakText(feedback);
+        nextEmotionButton.disabled = false;
+    }
+
     function loadLocalScore() {
-        const savedScore = localStorage.getItem(LOCAL_STORAGE_KEY);
-        emotionScore = savedScore ? parseInt(savedScore, 10) : 0;
+        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+        emotionScore = saved ? parseInt(saved, 10) : 0;
         updateScoreDisplay();
     }
-    
+
     function updateScoreDisplay() {
         localScoreDisplay.textContent = `${emotionScore} Puntos`;
     }
 
-    // --- 2. DATOS DE LOS MODOS (RUTINAS/EMOCIONES) ---
-    
-    // Los datos de RUTINAS_DATA son los mismos que en el código anterior.
-    const ROUTINES_DATA = { 
-        morning: {
-            title: "Reordena la Rutina de la Mañana (4 Pasos)",
-            sequence: [
-                { emoji: '🛌', text: 'Despertar', value: 'despertar' },
-                { emoji: '🥣', text: 'Desayunar', value: 'desayunar' }, 
-                { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse' }, 
-                { emoji: '👕', text: 'Vestirse', value: 'vestirse' },
-            ]
-        },
-        night: {
-            title: "Reordena la Rutina de la Noche (6 Pasos)",
-            sequence: [
-                { emoji: '🍽️', text: 'Cenar', value: 'cenar' },
-                { emoji: '🛀', text: 'Bañarse', value: 'bañarse' }, 
-                { emoji: '👚', text: 'Ponerse el Pijama', value: 'pijama' },
-                { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse_noche' }, 
-                { emoji: '📚', text: 'Leer un Cuento', value: 'cuento' }, 
-                { emoji: '😴', text: 'Dormir', value: 'dormir' },
-            ]
-        },
-        school: {
-            title: "Regreso a Casa (5 Pasos)",
-            sequence: [
-                { emoji: '🎒', text: 'Quitarse la Mochila', value: 'mochila' },
-                { emoji: '👋', text: 'Lavar Manos', value: 'manos' }, 
-                { emoji: '🍎', text: 'Merendar', value: 'merendar' },
-                { emoji: '✏️', text: 'Hacer la Tarea', value: 'tarea' }, 
-                { emoji: '⚽', text: 'Jugar Tiempo Libre', value: 'jugar' },
-            ]
-        },
-        outside: {
-            title: "Rutina para Salir de Casa (5 Pasos)",
-            sequence: [
-                { emoji: '🧦', text: 'Ponerse Calcetines', value: 'calcetines' },
-                { emoji: '👟', text: 'Ponerse Zapatos', value: 'zapatos' }, 
-                { emoji: '🧥', text: 'Ponerse Abrigo', value: 'abrigo' },
-                { emoji: '🔑', text: 'Tomar Llaves', value: 'llaves' }, 
-                { emoji: '🚪', text: 'Abrir Puerta y Salir', value: 'salir' },
-            ]
-        },
-        teeth: {
-            title: "Rutina de Cepillado Completo (4 Pasos)",
-            sequence: [
-                { emoji: '🚰', text: 'Mojar el Cepillo', value: 'mojar' },
-                { emoji: '🧴', text: 'Poner Pasta', value: 'pasta' }, 
-                { emoji: '🦷', text: 'Cepillar por dos minutos', value: 'cepillar' }, 
-                { emoji: '💦', text: 'Enjuagar y Escupir', value: 'enjuagar' },
-            ]
-        },
-        washing_hands: {
-            title: "Rutina de Lavado de Manos (4 Pasos)",
-            sequence: [
-                { emoji: '🚰', text: 'Abrir el Agua y Mojar', value: 'mojar_manos' },
-                { emoji: '🧼', text: 'Usar Jabón', value: 'jabon' }, 
-                { emoji: '🖐️', text: 'Frotar las manos', value: 'frotar' }, 
-                { emoji: '🧻', text: 'Secar con Toalla', value: 'secar' },
-            ]
-        },
-        going_to_bathroom: {
-            title: "Rutina de Usar el Baño (5 Pasos)",
-            sequence: [
-                { emoji: '👖', text: 'Bajar la Ropa', value: 'bajar_ropa' },
-                { emoji: '🚽', text: 'Usar el Inodoro', value: 'usar_inodoro' }, 
-                { emoji: '🧻', text: 'Limpiarse', value: 'limpiarse' }, 
-                { emoji: '👆', text: 'Subir la Ropa', value: 'subir_ropa' },
-                { emoji: '👋', text: 'Lavar Manos', value: 'lavar_manos_final' },
-            ]
-        },
-        bed_making: {
-            title: "Rutina de Hacer la Cama (5 Pasos)",
-            sequence: [
-                { emoji: '⬆️', text: 'Estirar la Sábana de Abajo', value: 'estirar_sabana' },
-                { emoji: '🛏️', text: 'Acomodar la Almohada', value: 'acomodar_almohada' }, 
-                { emoji: '🛌', text: 'Estirar la Frazada', value: 'estirar_frazada' }, 
-                { emoji: '🧸', text: 'Colocar los Peluches', value: 'colocar_adornos' },
-                { emoji: '✔️', text: 'Verificar el Orden', value: 'verificar_cama' },
-            ]
-        },
-        snack: {
-            title: "Preparación de Merienda (3 Pasos)",
-            sequence: [
-                { emoji: '🚰', text: 'Lavar la Fruta', value: 'lavar' },
-                { emoji: '🔪', text: 'Cortar la Fruta', value: 'cortar' }, 
-                { emoji: '😋', text: 'Comer la Merienda', value: 'comer' },
-            ]
-        },
-        table: {
-            title: "Rutina de Poner la Mesa (4 Pasos)",
-            sequence: [
-                { emoji: '🧺', text: 'Traer el Mantel', value: 'mantel' },
-                { emoji: '🍽️', text: 'Colocar los Platos', value: 'platos' }, 
-                { emoji: '🍴', text: 'Colocar los Cubiertos', value: 'cubiertos' }, 
-                { emoji: '🥛', text: 'Colocar los Vasos', value: 'vasos' },
-            ]
-        },
-        pet_feeding: {
-            title: "Rutina de Dar Comida a la Mascota (4 Pasos)",
-            sequence: [
-                { emoji: '🥣', text: 'Tomar el Plato', value: 'tomar_plato' },
-                { emoji: '🥫', text: 'Servir la Comida', value: 'servir_comida' }, 
-                { emoji: '🐕', text: 'Colocar en Su Lugar', value: 'colocar_lugar' }, 
-                { emoji: '💧', text: 'Revisar el Agua', value: 'revisar_agua' },
-            ]
-        },
-        laundry: {
-            title: "Rutina de Poner Lavadora (5 Pasos)",
-            sequence: [
-                { emoji: '🧺', text: 'Separar la Ropa (Color/Blanco)', value: 'separar_ropa' },
-                { emoji: '👕', text: 'Meter la Ropa a la Lavadora', value: 'meter_ropa' }, 
-                { emoji: '🧴', text: 'Poner Jabón', value: 'poner_jabon' }, 
-                { emoji: '⚙️', text: 'Seleccionar el Programa', value: 'seleccionar_programa' },
-                { emoji: '▶️', text: 'Presionar Inicio', value: 'inicio_lavado' },
-            ]
-        },
-        taking_out_trash: {
-            title: "Rutina de Sacar la Basura (4 Pasos)",
-            sequence: [
-                { emoji: '🗑️', text: 'Recoger las Bolsas de Basura', value: 'recoger_bolsas' },
-                { emoji: '🚪', text: 'Abrir la Puerta y Salir', value: 'abrir_puerta' }, 
-                { emoji: '🚛', text: 'Depositar en el Contenedor', value: 'depositar' }, 
-                { emoji: '👋', text: 'Lavar Manos al Volver', value: 'lavar_manos_basura' },
-            ]
-        },
-        watering_plants: {
-            title: "Rutina de Regar Plantas (4 Pasos)",
-            sequence: [
-                { emoji: '🚰', text: 'Llenar la Regadera con Agua', value: 'llenar_regadera' },
-                { emoji: '🪴', text: 'Ir a las Plantas', value: 'ir_plantas' }, 
-                { emoji: '💦', text: 'Regar con Cuidado', value: 'regar' }, 
-                { emoji: '☀️', text: 'Guardar la Regadera', value: 'guardar_regadera' },
-            ]
-        },
-        buying_food: {
-            title: "Rutina de Comprar en la Tienda (5 Pasos)",
-            sequence: [
-                { emoji: '🛍️', text: 'Tomar la Bolsa Reutilizable', value: 'bolsa' },
-                { emoji: '🛒', text: 'Buscar Productos', value: 'buscar_productos' }, 
-                { emoji: '💰', text: 'Pagar en Caja', value: 'pagar' }, 
-                { emoji: '🚶', text: 'Regresar a Casa', value: 'regresar' },
-                { emoji: '📦', text: 'Guardar las Compras', value: 'guardar_compras' },
-            ]
-        },
-        drawing: {
-            title: "Preparación para Dibujar (4 Pasos)",
-            sequence: [
-                { emoji: '🖍️', text: 'Sacar Lápices de Colores', value: 'sacar_lapices' },
-                { emoji: '📄', text: 'Poner la Hoja en la Mesa', value: 'poner_hoja' }, 
-                { emoji: '🎨', text: 'Empezar a Dibujar', value: 'empezar_dibujar' }, 
-                { emoji: '🗑️', text: 'Recoger el Material', value: 'recoger_material' },
-            ]
-        },
-        cleaning_desk: {
-            title: "Rutina de Limpiar Escritorio (4 Pasos)",
-            sequence: [
-                { emoji: '📚', text: 'Quitar libros y objetos', value: 'quitar_objetos' },
-                { emoji: '🧽', text: 'Pasar el paño húmedo', value: 'pasar_pano' }, 
-                { emoji: '🗑️', text: 'Vaciar la papelera', value: 'vaciar_papelera' }, 
-                { emoji: '✔️', text: 'Organizar el material', value: 'organizar_material' },
-            ]
-        },
-        playground: {
-            title: "Rutina de Ir al Parque (5 Pasos)",
-            sequence: [
-                { emoji: '☀️', text: 'Poner Bloqueador Solar', value: 'bloqueador' },
-                { emoji: '👟', text: 'Poner Zapatos', value: 'zapatos_parque' }, 
-                { emoji: '🔑', text: 'Tomar Pelota o Juguete', value: 'tomar_juguete' }, 
-                { emoji: '🚶', text: 'Caminar al Parque', value: 'caminar' },
-                { emoji: '⚽', text: 'Empezar a Jugar', value: 'empezar_jugar' },
-            ]
-        },
-        birthday: {
-            title: "Preparar un Cumpleaños (5 Pasos)",
-            sequence: [
-                { emoji: '🎈', text: 'Inflar y Colgar Globos', value: 'colgar_globos' },
-                { emoji: '🎂', text: 'Poner el Pastel en la Mesa', value: 'poner_pastel' }, 
-                { emoji: '🎁', text: 'Colocar los Regalos', value: 'colocar_regalos' }, 
-                { emoji: '🎶', text: 'Poner Música', value: 'poner_musica' },
-                { emoji: '🛎️', text: 'Esperar a los Invitados', value: 'esperar_invitados' },
-            ]
-        },
-        homework_start: {
-            title: "Empezar Tarea (4 Pasos)",
-            sequence: [
-                { emoji: '🍎', text: 'Tomar un Vaso de Agua', value: 'agua_tarea' },
-                { emoji: '📚', text: 'Sacar Cuadernos Necesarios', value: 'sacar_cuadernos' }, 
-                { emoji: '🪑', text: 'Sentarse en el Escritorio', value: 'sentarse' }, 
-                { emoji: '🧠', text: 'Concentrarse y Empezar', value: 'empezar_concentrarse' },
-            ]
-        },
+    function loadEmotionDetector() {
+        isLocked = true;
+        nextEmotionButton.disabled = true;
+        emotionOptionsGrid.innerHTML = '';
+        requestNewScenario();
+        loadLocalScore();
+    }
+
+    // === EVENTOS ===
+    modeAButton.addEventListener('click', () => switchMode('A'));
+    modeBButton.addEventListener('click', () => switchMode('B'));
+    routineSelectorEl.addEventListener('change', (e) => loadRoutine(e.target.value));
+    checkButton.addEventListener('click', checkSequence);
+    nextEmotionButton.addEventListener('click', loadEmotionDetector);
+    scenarioOutputBox.addEventListener('click', () => {
+        if (!isLocked && currentTargetResponse?.scenario) {
+            speakText(currentTargetResponse.scenario);
+        }
+    });
+
+    function switchMode(mode) {
+        if (currentMode === mode) return;
+        currentMode = mode;
+        speechSynthesis.cancel();
+        messageBox.classList.add('hidden');
+        if (mode === 'A') {
+            modeAContent.classList.remove('hidden');
+            modeBContent.classList.add('hidden');
+            modeAButton.classList.replace('text-gray-500', 'text-blue-600');
+            modeAButton.classList.replace('border-transparent', 'border-blue-600');
+            modeBButton.classList.replace('text-blue-600', 'text-gray-500');
+            modeBButton.classList.replace('border-blue-600', 'border-transparent');
+            loadRoutine(routineSelectorEl.value);
+        } else {
+            modeAContent.classList.add('hidden');
+            modeBContent.classList.remove('hidden');
+            modeBButton.classList.replace('text-gray-500', 'text-pink-600');
+            modeBButton.classList.replace('border-transparent', 'border-pink-600');
+            modeAButton.classList.replace('text-blue-600', 'text-gray-500');
+            modeAButton.classList.replace('border-blue-600', 'border-transparent');
+            loadEmotionDetector();
+        }
+    }
+
+    // === INICIO ===
+    window.onload = () => {
+        switchMode('A');
+        setTimeout(() => speechSynthesis.getVoices(), 500);
     };
 
-    // B. Emociones (Modo B)
+    // === DATOS COMPLETOS (copiados de tu archivo original) ===
+    const ROUTINES_DATA = {
+        morning: { title: "Reordena la Rutina de la Mañana (4 Pasos)", sequence: [{ emoji: '🛌', text: 'Despertar', value: 'despertar' }, { emoji: '🥣', text: 'Desayunar', value: 'desayunar' }, { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse' }, { emoji: '👕', text: 'Vestirse', value: 'vestirse' }] },
+        night: { title: "Reordena la Rutina de la Noche (6 Pasos)", sequence: [{ emoji: '🍽️', text: 'Cenar', value: 'cenar' }, { emoji: '🛀', text: 'Bañarse', value: 'bañarse' }, { emoji: '👚', text: 'Ponerse el Pijama', value: 'pijama' }, { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse_noche' }, { emoji: '📚', text: 'Leer un Cuento', value: 'cuento' }, { emoji: '😴', text: 'Dormir', value: 'dormir' }] },
+        school: { title: "Regreso a Casa (5 Pasos)", sequence: [{ emoji: '🎒', text: 'Quitarse la Mochila', value: 'mochila' }, { emoji: '👋', text: 'Lavar Manos', value: 'manos' }, { emoji: '🍎', text: 'Merendar', value: 'merendar' }, { emoji: '✏️', text: 'Hacer la Tarea', value: 'tarea' }, { emoji: '⚽', text: 'Jugar Tiempo Libre', value: 'jugar' }] },
+        outside: { title: "Rutina para Salir de Casa (5 Pasos)", sequence: [{ emoji: '🧦', text: 'Ponerse Calcetines', value: 'calcetines' }, { emoji: '👟', text: 'Ponerse Zapatos', value: 'zapatos' }, { emoji: '🧥', text: 'Ponerse Abrigo', value: 'abrigo' }, { emoji: '🔑', text: 'Tomar Llaves', value: 'llaves' }, { emoji: '🚪', text: 'Abrir Puerta y Salir', value: 'salir' }] },
+        teeth: { title: "Rutina de Cepillado Completo (4 Pasos)", sequence: [{ emoji: '🚰', text: 'Mojar el Cepillo', value: 'mojar' }, { emoji: '🧴', text: 'Poner Pasta', value: 'pasta' }, { emoji: '🦷', text: 'Cepillar por dos minutos', value: 'cepillar' }, { emoji: '💦', text: 'Enjuagar y Escupir', value: 'enjuagar' }] },
+        washing_hands: { title: "Rutina de Lavado de Manos (4 Pasos)", sequence: [{ emoji: '🚰', text: 'Abrir el Agua y Mojar', value: 'mojar_manos' }, { emoji: '🧼', text: 'Usar Jabón', value: 'jabon' }, { emoji: '🖐️', text: 'Frotar las manos', value: 'frotar' }, { emoji: '🧻', text: 'Secar con Toalla', value: 'secar' }] },
+        going_to_bathroom: { title: "Rutina de Usar el Baño (5 Pasos)", sequence: [{ emoji: '👖', text: 'Bajar la Ropa', value: 'bajar_ropa' }, { emoji: '🚽', text: 'Usar el Inodoro', value: 'usar_inodoro' }, { emoji: '🧻', text: 'Limpiarse', value: 'limpiarse' }, { emoji: '👆', text: 'Subir la Ropa', value: 'subir_ropa' }, { emoji: '👋', text: 'Lavar Manos', value: 'lavar_manos_final' }] },
+        bed_making: { title: "Rutina de Hacer la Cama (5 Pasos)", sequence: [{ emoji: '⬆️', text: 'Estirar la Sábana de Abajo', value: 'estirar_sabana' }, { emoji: '🛏️', text: 'Acomodar la Almohada', value: 'acomodar_almohada' }, { emoji: '🛌', text: 'Estirar la Frazada', value: 'estirar_frazada' }, { emoji: '🧸', text: 'Colocar los Peluches', value: 'colocar_adornos' }, { emoji: '✔️', text: 'Verificar el Orden', value: 'verificar_cama' }] },
+        snack: { title: "Preparación de Merienda (3 Pasos)", sequence: [{ emoji: '🚰', text: 'Lavar la Fruta', value: 'lavar' }, { emoji: '🔪', text: 'Cortar la Fruta', value: 'cortar' }, { emoji: '😋', text: 'Comer la Merienda', value: 'comer' }] },
+        table: { title: "Rutina de Poner la Mesa (4 Pasos)", sequence: [{ emoji: '🧺', text: 'Traer el Mantel', value: 'mantel' }, { emoji: '🍽️', text: 'Colocar los Platos', value: 'platos' }, { emoji: '🍴', text: 'Colocar los Cubiertos', value: 'cubiertos' }, { emoji: '🥛', text: 'Colocar los Vasos', value: 'vasos' }] },
+        pet_feeding: { title: "Rutina de Dar Comida a la Mascota (4 Pasos)", sequence: [{ emoji: '🥣', text: 'Tomar el Plato', value: 'tomar_plato' }, { emoji: '🥫', text: 'Servir la Comida', value: 'servir_comida' }, { emoji: '🐕', text: 'Colocar en Su Lugar', value: 'colocar_lugar' }, { emoji: '💧', text: 'Revisar el Agua', value: 'revisar_agua' }] },
+        laundry: { title: "Rutina de Poner Lavadora (5 Pasos)", sequence: [{ emoji: '🧺', text: 'Separar la Ropa (Color/Blanco)', value: 'separar_ropa' }, { emoji: '👕', text: 'Meter la Ropa a la Lavadora', value: 'meter_ropa' }, { emoji: '🧴', text: 'Poner Jabón', value: 'poner_jabon' }, { emoji: '⚙️', text: 'Seleccionar el Programa', value: 'seleccionar_programa' }, { emoji: '▶️', text: 'Presionar Inicio', value: 'inicio_lavado' }] },
+        taking_out_trash: { title: "Rutina de Sacar la Basura (4 Pasos)", sequence: [{ emoji: '🗑️', text: 'Recoger las Bolsas de Basura', value: 'recoger_bolsas' }, { emoji: '🚪', text: 'Abrir la Puerta y Salir', value: 'abrir_puerta' }, { emoji: '🚛', text: 'Depositar en el Contenedor', value: 'depositar' }, { emoji: '👋', text: 'Lavar Manos al Volver', value: 'lavar_manos_basura' }] },
+        watering_plants: { title: "Rutina de Regar Plantas (4 Pasos)", sequence: [{ emoji: '🚰', text: 'Llenar la Regadera con Agua', value: 'llenar_regadera' }, { emoji: '🪴', text: 'Ir a las Plantas', value: 'ir_plantas' }, { emoji: '💦', text: 'Regar con Cuidado', value: 'regar' }, { emoji: '☀️', text: 'Guardar la Regadera', value: 'guardar_regadera' }] },
+        buying_food: { title: "Rutina de Comprar en la Tienda (5 Pasos)", sequence: [{ emoji: '🛍️', text: 'Tomar la Bolsa Reutilizable', value: 'bolsa' }, { emoji: '🛒', text: 'Buscar Productos', value: 'buscar_productos' }, { emoji: '💰', text: 'Pagar en Caja', value: 'pagar' }, { emoji: '🚶', text: 'Regresar a Casa', value: 'regresar' }, { emoji: '📦', text: 'Guardar las Compras', value: 'guardar_compras' }] },
+        drawing: { title: "Preparación para Dibujar (4 Pasos)", sequence: [{ emoji: '🖍️', text: 'Sacar Lápices de Colores', value: 'sacar_lapices' }, { emoji: '📄', text: 'Poner la Hoja en la Mesa', value: 'poner_hoja' }, { emoji: '🎨', text: 'Empezar a Dibujar', value: 'empezar_dibujar' }, { emoji: '🗑️', text: 'Recoger el Material', value: 'recoger_material' }] },
+        cleaning_desk: { title: "Rutina de Limpiar Escritorio (4 Pasos)", sequence: [{ emoji: '📚', text: 'Quitar libros y objetos', value: 'quitar_objetos' }, { emoji: '🧽', text: 'Pasar el paño húmedo', value: 'pasar_pano' }, { emoji: '🗑️', text: 'Vaciar la papelera', value: 'vaciar_papelera' }, { emoji: '✔️', text: 'Organizar el material', value: 'organizar_material' }] },
+        playground: { title: "Rutina de Ir al Parque (5 Pasos)", sequence: [{ emoji: '☀️', text: 'Poner Bloqueador Solar', value: 'bloqueador' }, { emoji: '👟', text: 'Poner Zapatos', value: 'zapatos_parque' }, { emoji: '🔑', text: 'Tomar Pelota o Juguete', value: 'tomar_juguete' }, { emoji: '🚶', text: 'Caminar al Parque', value: 'caminar' }, { emoji: '⚽', text: 'Empezar a Jugar', value: 'empezar_jugar' }] },
+        birthday: { title: "Preparar un Cumpleaños (5 Pasos)", sequence: [{ emoji: '🎈', text: 'Inflar y Colgar Globos', value: 'colgar_globos' }, { emoji: '🎂', text: 'Poner el Pastel en la Mesa', value: 'poner_pastel' }, { emoji: '🎁', text: 'Colocar los Regalos', value: 'colocar_regalos' }, { emoji: '🎶', text: 'Poner Música', value: 'poner_musica' }, { emoji: '🛎️', text: 'Esperar a los Invitados', value: 'esperar_invitados' }] },
+        homework_start: { title: "Empezar Tarea (4 Pasos)", sequence: [{ emoji: '🍎', text: 'Tomar un Vaso de Agua', value: 'agua_tarea' }, { emoji: '📚', text: 'Sacar Cuadernos Necesarios', value: 'sacar_cuadernos' }, { emoji: '🪑', text: 'Sentarse en el Escritorio', value: 'sentarse' }, { emoji: '🧠', text: 'Concentrarse y Empezar', value: 'empezar_concentrarse' }] }
+    };
+
     const EMOTION_DATA = [
         { name: 'Feliz', emoji: '😊', color: 'green' },
         { name: 'Triste', emoji: '😢', color: 'blue' },
@@ -539,576 +534,8 @@
         { name: 'Avergonzado', emoji: '😳', color: 'pink' },
         { name: 'Orgulloso', emoji: '😎', color: 'lime' },
         { name: 'Decepción', emoji: '😞', color: 'brown' },
-        { name: 'Nervioso', emoji: '😬', color: 'yellow' },
+        { name: 'Nervioso', emoji: '😬', color: 'yellow' }
     ];
-    
-    // --- 3. FUNCIONES GENERALES Y UTILERÍA DE API/TTS ---
-
-    /** --- Funciones para manejar la conversión de PCM a WAV (Necesarias para TTS API) --- **/
-    function base64ToArrayBuffer(base64) {
-        const binaryString = atob(base64);
-        const len = binaryString.length;
-        const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-        }
-        return bytes.buffer;
-    }
-    function writeString(view, offset, string) {
-        for (let i = 0; i < string.length; i++) {
-            view.setUint8(offset + i, string.charCodeAt(i));
-        }
-    }
-    function writeUint16(view, offset, value) {
-        view.setUint16(offset, value, true); 
-    }
-    function writeUint32(view, offset, value) {
-        view.setUint32(offset, value, true); 
-    }
-    function pcmToWav(pcm16, sampleRate) {
-        const numChannels = 1; 
-        const bytesPerSample = 2; // 16-bit PCM
-        const bufferSize = pcm16.byteLength;
-        const totalLength = bufferSize + 44;
-        const arrayBuffer = new ArrayBuffer(totalLength);
-        const view = new DataView(arrayBuffer);
-        
-        // RIFF chunk
-        writeString(view, 0, 'RIFF'); 
-        writeUint32(view, 4, totalLength - 8); 
-        writeString(view, 8, 'WAVE'); 
-
-        // FMT sub-chunk
-        writeString(view, 12, 'fmt '); 
-        writeUint32(view, 16, 16); 
-        writeUint16(view, 20, 1); 
-        writeUint16(view, 22, numChannels); 
-        writeUint32(view, 24, sampleRate); 
-        writeUint32(view, 28, sampleRate * numChannels * bytesPerSample); 
-        writeUint16(view, 32, numChannels * bytesPerSample); 
-        writeUint16(view, 34, bytesPerSample * 8); 
-
-        // DATA sub-chunk
-        writeString(view, 36, 'data'); 
-        writeUint32(view, 40, bufferSize); 
-
-        // Escribir los datos PCM
-        const pcmDataOffset = 44;
-        const pcmBytes = new Uint8Array(arrayBuffer, pcmDataOffset, bufferSize);
-        pcmBytes.set(new Uint8Array(pcm16.buffer));
-
-        return new Blob([arrayBuffer], { type: 'audio/wav' });
-    }
-    
-    /**
-     * Reproduce un Blob de audio WAV.
-     * @param {Blob} wavBlob - El Blob de audio WAV.
-     * @param {string} type - 'feedback' si es del botón de verificación (Modo A), 'default' en otro caso.
-     */
-    function playAudio(wavBlob, type = 'default') {
-        if (audioSource) {
-            audioSource.stop();
-            audioSource.disconnect();
-            audioSource = null;
-        }
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-
-        const fileReader = new FileReader();
-        fileReader.onload = (e) => {
-            audioContext.decodeAudioData(e.target.result, (buffer) => {
-                audioSource = audioContext.createBufferSource();
-                audioSource.buffer = buffer;
-                audioSource.connect(audioContext.destination);
-                
-                audioSource.onended = () => {
-                    isPlaying = false;
-                    if (currentMode === 'B') updateAudioIndicator(false); 
-                    // Si es un feedback de Modo A, reseteamos el botón para que pueda seguir jugando
-                    if (currentMode === 'A' && type === 'feedback') checkButton.disabled = false;
-                };
-                
-                audioSource.start(0);
-                isPlaying = true;
-                if (currentMode === 'B') updateAudioIndicator(true, "Reproduciendo...", "bg-green-600");
-            }, (error) => {
-                console.error("Error al decodificar los datos de audio:", error);
-                if (currentMode === 'B') updateAudioIndicator(false);
-                if (currentMode === 'A' && type === 'feedback') checkButton.disabled = false;
-            });
-        };
-        fileReader.onerror = (error) => {
-            console.error("Error al leer el Blob:", error);
-            if (currentMode === 'B') updateAudioIndicator(false);
-            if (currentMode === 'A' && type === 'feedback') checkButton.disabled = false;
-        };
-        fileReader.readAsArrayBuffer(wavBlob);
-    }
-    
-    /**
-     * Realiza la solicitud de TTS a la API de Gemini.
-     * @param {string} text - El texto a convertir a voz.
-     * @param {string} type - Tipo de solicitud ('feedback' o 'default').
-     */
-    async function makeTtsRequest(text, type = 'default') {
-        if (!text) return;
-        
-        // Detener si ya está reproduciendo, ya que vamos a iniciar una nueva lectura
-        if (isPlaying && audioSource) {
-             audioSource.stop();
-             audioSource = null;
-             isPlaying = false;
-             if (currentMode === 'B') updateAudioIndicator(false); 
-        }
-        
-        if (currentMode === 'B') updateAudioIndicator(true, "Cargando Audio...", "bg-yellow-500");
-        if (currentMode === 'A' && type === 'feedback') checkButton.disabled = true; // Deshabilitar botón mientras carga/reproduce el feedback
-
-        const payload = {
-            contents: [{
-                parts: [{ text: text }]
-            }],
-            generationConfig: {
-                responseModalities: ["AUDIO"],
-                speechConfig: {
-                    voiceConfig: {
-                        prebuiltVoiceConfig: { voiceName: VOICE_NAME } // Usando la voz consistente
-                    }
-                }
-            }
-        };
-
-        try {
-            const response = await fetchWithRetry(async () => {
-                const res = await fetch(TTS_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!res.ok) throw new Error(`TTS API call failed with status: ${res.status}`);
-                return res;
-            });
-
-            const result = await response.json();
-            const part = result?.candidates?.[0]?.content?.parts?.[0];
-            const audioData = part?.inlineData?.data;
-            const mimeType = part?.inlineData?.mimeType; 
-
-            if (audioData && mimeType && mimeType.startsWith("audio/")) {
-                const match = mimeType.match(/rate=(\d+)/);
-                const sampleRate = match ? parseInt(match[1], 10) : 24000;
-                
-                const pcmDataBuffer = base64ToArrayBuffer(audioData);
-                const pcm16 = new Int16Array(pcmDataBuffer);
-                const wavBlob = pcmToWav(pcm16, sampleRate);
-                
-                playAudio(wavBlob, type);
-            } else {
-                throw new Error("No se recibieron datos de audio válidos.");
-            }
-
-        } catch (error) {
-            console.error("Error al solicitar TTS:", error);
-            if (currentMode === 'B') {
-                updateAudioIndicator(true, "Error de Audio", "bg-red-500");
-                setTimeout(() => updateAudioIndicator(false), 3000);
-            }
-            if (currentMode === 'A' && type === 'feedback') checkButton.disabled = false; // Rehabilita el botón
-        }
-    }
-    
-    /** --- FIN Funciones para TTS --- **/
-
-    /**
-     * Solo para Modo B: Actualiza el indicador visual de audio.
-     */
-    function updateAudioIndicator(isVisible, text = "Cargando Audio...", classes = "bg-yellow-500") {
-        if (currentMode !== 'B') return;
-        
-        audioIndicator.classList.toggle('hidden', !isVisible);
-        audioIndicator.classList.toggle('flex', isVisible);
-        audioStatusText.textContent = text;
-        
-        audioIndicator.classList.remove('bg-yellow-500', 'bg-green-600', 'bg-red-500');
-        audioIndicator.classList.add(classes);
-        
-        audioLoadingRing.classList.toggle('hidden', text !== "Cargando Audio...");
-    }
-
-    async function fetchWithRetry(fn, maxRetries = 3) {
-        for (let attempt = 0; attempt < maxRetries; attempt++) {
-            try {
-                return await fn();
-            } catch (error) {
-                if (attempt === maxRetries - 1) throw error;
-                const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
-                await new Promise(resolve => setTimeout(resolve, delay));
-            }
-        }
-    }
-
-    function shuffleArray(array) {
-        const newArray = [...array]; 
-        for (let i = newArray.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-        }
-        return newArray;
-    }
-
-    function showMessage(text, classes) {
-        messageBox.innerHTML = text; // Usar innerHTML para negritas
-        messageBox.className = `p-3 text-center rounded-xl font-bold transition-all ${classes}`;
-        messageBox.classList.remove('hidden');
-        setTimeout(() => {
-            messageBox.classList.add('hidden');
-        }, 8000); // 8 segundos para mensajes importantes de feedback
-    }
-    
-    function switchMode(mode) {
-        if (currentMode === mode) return;
-
-        currentMode = mode;
-        messageBox.classList.add('hidden');
-        
-        // Detener audio al cambiar de modo
-        if (audioSource) {
-            audioSource.stop();
-            audioSource = null;
-            isPlaying = false;
-            updateAudioIndicator(false);
-        }
-        
-        if (mode === 'A') {
-            modeAContent.classList.remove('hidden');
-            modeBContent.classList.add('hidden');
-            modeAButton.classList.add('border-blue-600', 'text-blue-600');
-            modeAButton.classList.remove('border-transparent', 'text-gray-500');
-            modeBButton.classList.remove('border-pink-600', 'text-pink-600');
-            modeBButton.classList.add('border-transparent', 'text-gray-500');
-            loadRoutine(routineSelectorEl.value); 
-        } else { // Mode B
-            modeAContent.classList.add('hidden');
-            modeBContent.classList.remove('hidden');
-            modeBButton.classList.add('border-pink-600', 'text-pink-600');
-            modeBButton.classList.remove('border-transparent', 'text-gray-500');
-            modeAButton.classList.remove('border-blue-600', 'text-blue-600');
-            modeAButton.classList.add('border-transparent', 'text-gray-500');
-            loadEmotionDetector(); 
-        }
-    }
-
-
-    // --- 4. LÓGICA DEL MODO A: Secuencias Diarias ---
-
-    function renderSequence() {
-        dropTargetsEl.innerHTML = '';
-        currentSequence.forEach((item, index) => {
-            const target = document.createElement('div');
-            let classes = 'filled-drop-zone p-4 flex items-center h-24 font-bold transition-all shadow-sm ';
-            
-            if (index === selectedPictoIndex) {
-                classes += ' selected-picto';
-            } else if (validationStatus[index] === 'correct') {
-                classes += ' picto-correct';
-            } else if (validationStatus[index] === 'incorrect') {
-                classes += ' picto-incorrect';
-            }
-            
-            target.className = classes + ' w-full'; 
-            target.id = `target-${index}`;
-
-            const content = document.createElement('div');
-            content.className = 'flex flex-row items-center justify-between w-full h-full';
-            content.innerHTML = `<span class="text-3xl font-extrabold mr-4">${index + 1}.</span> 
-                                   <div class="flex flex-row items-center justify-start flex-grow space-x-4">
-                                       <span class="text-5xl">${item.emoji}</span>
-                                       <span class="text-lg font-bold text-gray-800">${item.text}</span>
-                                   </div>`;
-
-            target.appendChild(content);
-            
-            // Lógica de Clic: 1. TTS del texto, 2. Lógica de intercambio
-            target.addEventListener('click', () => {
-                 makeTtsRequest(item.text); // Lee el texto
-                 handleTargetClick(index); // Ejecuta la lógica de intercambio
-            }); 
-            dropTargetsEl.appendChild(target);
-        });
-    }
-
-    function handleTargetClick(clickedIndex) {
-        validationStatus = []; 
-        if (selectedPictoIndex === null) {
-            selectedPictoIndex = clickedIndex;
-            showMessage('Pictograma seleccionado. ¡Haz clic en otro para intercambiar!', 'bg-yellow-100 text-yellow-800');
-            renderSequence(); 
-        } else {
-            if (selectedPictoIndex === clickedIndex) {
-                selectedPictoIndex = null;
-                showMessage('Selección cancelada.', 'bg-gray-200 text-gray-700');
-                renderSequence();
-            } else {
-                [currentSequence[selectedPictoIndex], currentSequence[clickedIndex]] = 
-                [currentSequence[clickedIndex], currentSequence[selectedPictoIndex]];
-                
-                selectedPictoIndex = null;
-                showMessage('¡Intercambio realizado! Revisa el orden.', 'bg-green-100 text-green-800');
-                renderSequence();
-            }
-        }
-    }
-
-    function loadRoutine(routineKey) {
-        const routineData = ROUTINES_DATA[routineKey];
-        if (!routineData) return;
-
-        routineTitleEl.textContent = routineData.title;
-        currentCorrectSequence = routineData.sequence;
-        currentSequence = shuffleArray(routineData.sequence); 
-        selectedPictoIndex = null;
-        validationStatus = [];
-        
-        renderSequence();
-        messageBox.classList.add('hidden');
-    }
-
-    function checkSequence() {
-        if (selectedPictoIndex !== null) {
-            showMessage('Debes deseleccionar o completar el intercambio antes de verificar.', 'bg-yellow-100 text-yellow-800');
-            return;
-        }
-        
-        const correctValues = currentCorrectSequence.map(item => item.value);
-        let allCorrect = true;
-        validationStatus = [];
-        let feedbackMessage = '';
-
-        for (let i = 0; i < currentSequence.length; i++) {
-            if (currentSequence[i].value !== correctValues[i]) {
-                allCorrect = false;
-                validationStatus[i] = 'incorrect';
-            } else {
-                validationStatus[i] = 'correct';
-            }
-        }
-
-        if (allCorrect) {
-            feedbackMessage = '¡Felicidades! 🎉 La secuencia es COMPLETAMENTE CORRECTA. ¡Excelente trabajo!';
-            showMessage(feedbackMessage, 'bg-emerald-100 text-emerald-800');
-            makeTtsRequest('Felicidades! La secuencia es completamente correcta. ¡Excelente trabajo!', 'feedback');
-            // Cargar la siguiente rutina automáticamente después de un breve retraso
-            setTimeout(() => {
-                 const currentKeys = Object.keys(ROUTINES_DATA);
-                 const currentIndex = currentKeys.indexOf(routineSelectorEl.value);
-                 const nextIndex = (currentIndex + 1) % currentKeys.length;
-                 routineSelectorEl.value = currentKeys[nextIndex];
-                 loadRoutine(currentKeys[nextIndex]);
-            }, 3000);
-        } else {
-            feedbackMessage = 'Aún no es correcto. 🧐 Revisa los pasos marcados en rojo e intenta intercambiarlos.';
-            showMessage(feedbackMessage, 'bg-rose-100 text-rose-800');
-            makeTtsRequest('Aún no es correcto. Revisa los pasos marcados en rojo e intenta intercambiarlos.', 'feedback');
-        }
-
-        renderSequence();
-    }
-
-
-    // --- 5. LÓGICA DEL MODO B: Detective Emocional ---
-    
-    // Función para solicitar un nuevo escenario a Gemini
-    async function requestNewScenario() {
-        scenarioLoader.classList.remove('hidden');
-        targetScenarioText.textContent = 'Cargando un nuevo escenario emocional...';
-        scenarioOutputBox.style.cursor = 'default';
-        isLocked = true;
-        
-        try {
-            const allEmotions = EMOTION_DATA.map(e => e.name).join(', ');
-            const prompt = `Actúa como un psicólogo infantil experto en autismo y crea un escenario breve y realista (máximo 40 palabras) donde un niño o niña experimenta una emoción clara. La emoción DEBE ser una de las siguientes: Feliz, Triste, Enojado, Asustado, Calmado, Sorprendido, Pensativo, Aburrido, Avergonzado, Orgulloso, Decepción, Nervioso. 
-            Devuelve la respuesta como un objeto JSON estricto con la siguiente estructura:
-            {
-              "scenario": "Descripción del escenario.",
-              "primary_emotion": "Emoción principal que experimenta el niño (de la lista proporcionada).",
-              "secondary_emotions": ["Emoción secundaria o cercana (de la lista)"]
-            }`;
-
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            "scenario": { "type": "STRING" },
-                            "primary_emotion": { "type": "STRING" },
-                            "secondary_emotions": { "type": "ARRAY", "items": { "type": "STRING" } }
-                        },
-                        "propertyOrdering": ["scenario", "primary_emotion", "secondary_emotions"]
-                    }
-                }
-            };
-
-            const response = await fetchWithRetry(async () => {
-                const res = await fetch(TEXT_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!res.ok) throw new Error(`API call failed with status: ${res.status}`);
-                return res;
-            });
-
-            const result = await response.json();
-            const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-            const parsedJson = JSON.parse(jsonText);
-            currentTargetResponse = parsedJson;
-            
-            targetScenarioText.textContent = parsedJson.scenario;
-            scenarioLoader.classList.add('hidden');
-            isLocked = false;
-            scenarioOutputBox.style.cursor = 'pointer';
-            
-            // Generar opciones y bloquear interacción
-            generateEmotionOptions(parsedJson.primary_emotion);
-            
-            // TTS automático del escenario al cargar
-            makeTtsRequest(parsedJson.scenario);
-
-        } catch (error) {
-            console.error("Error al generar escenario emocional:", error);
-            targetScenarioText.textContent = '❌ Error al cargar el desafío. Intenta de nuevo.';
-            scenarioLoader.classList.add('hidden');
-            isLocked = true;
-        }
-    }
-    
-    // Función para generar las opciones de respuesta
-    function generateEmotionOptions(correctEmotionName) {
-        emotionOptionsGrid.innerHTML = '';
-        
-        const correctEmotion = EMOTION_DATA.find(e => e.name === correctEmotionName);
-        if (!correctEmotion) {
-            console.error("Emoción correcta no encontrada en datos:", correctEmotionName);
-            return;
-        }
-
-        // Obtener un subconjunto de 3 emociones incorrectas aleatorias
-        const incorrectCandidates = EMOTION_DATA.filter(e => e.name !== correctEmotionName);
-        const shuffledIncorrect = shuffleArray(incorrectCandidates);
-        
-        // Seleccionamos 3 (o menos si no hay suficientes)
-        const selectedIncorrect = shuffledIncorrect.slice(0, 3);
-        
-        const options = [...selectedIncorrect, correctEmotion];
-        const shuffledOptions = shuffleArray(options);
-
-        shuffledOptions.forEach(emotion => {
-            const button = document.createElement('button');
-            button.className = 'emotion-option rounded-xl active:scale-[0.98] transition-transform';
-            button.innerHTML = `<span class="text-5xl">${emotion.emoji}</span>
-                                <span class="block mt-2 text-lg font-bold text-gray-800">${emotion.name}</span>`;
-            
-            button.addEventListener('click', () => handleEmotionSelection(emotion.name, button));
-            emotionOptionsGrid.appendChild(button);
-        });
-
-        // Aseguramos que el botón de siguiente esté disponible después de responder
-        nextEmotionButton.disabled = true;
-    }
-    
-    // Función para manejar la selección de la emoción
-    function handleEmotionSelection(selectedEmotionName, button) {
-        if (isLocked) return;
-
-        isLocked = true;
-        let scoreGained = 0;
-        let feedbackText = '';
-
-        // 1. Limpiar todos los estilos de opciones
-        document.querySelectorAll('.emotion-option').forEach(btn => {
-            btn.classList.remove('emotion-primary', 'emotion-secondary', 'emotion-incorrect');
-            btn.disabled = true;
-        });
-
-        const correctEmotion = currentTargetResponse.primary_emotion;
-        const secondaryEmotions = currentTargetResponse.secondary_emotions || [];
-        
-        // 2. Aplicar estilos y calcular puntuación
-        if (selectedEmotionName === correctEmotion) {
-            // Acierto primario
-            button.classList.add('emotion-primary');
-            scoreGained = PRIMARY_SCORE;
-            emotionScore += scoreGained;
-            feedbackText = `¡Súper! 🌟 La emoción principal era ${correctEmotion}. Ganaste ${scoreGained} puntos.`;
-            makeTtsRequest(`Súper! La emoción principal era ${correctEmotion}. Ganaste ${scoreGained} puntos.`);
-        } else if (secondaryEmotions.includes(selectedEmotionName)) {
-            // Acierto secundario (emoción cercana)
-            button.classList.add('emotion-secondary');
-            scoreGained = SECONDARY_SCORE;
-            emotionScore += scoreGained;
-            feedbackText = `¡Bien! 👍 ${selectedEmotionName} es una emoción cercana a la principal (${correctEmotion}). Ganaste ${scoreGained} punto.`;
-             makeTtsRequest(`Bien! ${selectedEmotionName} es una emoción cercana a la principal. Ganaste ${scoreGained} punto.`);
-        } else {
-            // Error
-            button.classList.add('emotion-incorrect');
-            scoreGained = 0;
-            
-            // Resaltar la respuesta correcta
-            document.querySelectorAll('.emotion-option').forEach(btn => {
-                if (btn.textContent.includes(correctEmotion)) {
-                    btn.classList.add('emotion-primary');
-                }
-            });
-            
-            feedbackText = `Incorrecto. 😔 La emoción principal era ${correctEmotion}. Sigue practicando.`;
-            makeTtsRequest(`Incorrecto. La emoción principal era ${correctEmotion}. Sigue practicando.`);
-        }
-
-        // 3. Mostrar feedback, actualizar score y habilitar el botón "Siguiente"
-        showMessage(feedbackText, scoreGained > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800');
-        localStorage.setItem(LOCAL_STORAGE_KEY, emotionScore.toString());
-        updateScoreDisplay();
-        nextEmotionButton.disabled = false;
-    }
-    
-    function loadEmotionDetector() {
-        // Reiniciar estado y cargar un nuevo desafío
-        isLocked = true;
-        nextEmotionButton.disabled = true;
-        emotionOptionsGrid.innerHTML = '';
-        updateAudioIndicator(false);
-        requestNewScenario();
-        loadLocalScore();
-    }
-
-
-    // --- 6. INICIALIZACIÓN Y EVENT LISTENERS ---
-
-    // Eventos para cambiar de modo
-    modeAButton.addEventListener('click', () => switchMode('A'));
-    modeBButton.addEventListener('click', () => switchMode('B'));
-
-    // Eventos para Modo A
-    routineSelectorEl.addEventListener('change', (e) => loadRoutine(e.target.value));
-    checkButton.addEventListener('click', checkSequence);
-
-    // Eventos para Modo B
-    nextEmotionButton.addEventListener('click', loadEmotionDetector);
-    // TTS del escenario al hacer clic en el recuadro amarillo
-    scenarioOutputBox.addEventListener('click', () => {
-        if (!isLocked && currentTargetResponse && currentTargetResponse.scenario) {
-            makeTtsRequest(currentTargetResponse.scenario);
-        }
-    });
-
-    // Cargar la rutina inicial al iniciar la aplicación
-    window.onload = () => {
-        switchMode('A'); // Asegurar que empezamos en el Modo A
-    };
-    
 </script>
 </body>
 </html>
