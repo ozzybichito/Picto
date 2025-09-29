@@ -206,7 +206,7 @@
             <h2 id="routine-title" class="text-xl font-semibold text-gray-700 text-center mt-4"></h2>
             
             <p class="text-sm text-gray-500 text-center font-medium">
-                Haz clic en un pictograma para escucharlo. Haz clic en otro para **intercambiar** su orden.
+                Haz clic en un pictograma para escucharlo. Haz clic en otro para intercambiar su orden.
             </p>
 
             <!-- Zona de Reordenamiento -->
@@ -226,7 +226,7 @@
             
             <h2 class="text-2xl font-bold text-center text-pink-600">Detective Emocional 🧠</h2>
             <p class="text-base text-gray-600 text-center">
-                Lee el **escenario** y elige el pictograma de la emoción correcta. ¡Haz clic en el recuadro amarillo para **escucharlo** de nuevo!
+                Lee el escenario y elige el pictograma de la emoción correcta. ¡Haz clic en el recuadro amarillo para escucharlo de nuevo!
             </p>
             
             <!-- Display de Puntuación Local -->
@@ -842,7 +842,7 @@
         validationStatus = []; 
         if (selectedPictoIndex === null) {
             selectedPictoIndex = clickedIndex;
-            showMessage('Pictograma seleccionado. ¡Haz clic en otro para **intercambiar**!', 'bg-yellow-100 text-yellow-800');
+            showMessage('Pictograma seleccionado. ¡Haz clic en otro para intercambiar!', 'bg-yellow-100 text-yellow-800');
             renderSequence(); 
         } else {
             if (selectedPictoIndex === clickedIndex) {
@@ -895,7 +895,7 @@
         }
 
         if (allCorrect) {
-            feedbackMessage = '¡Felicidades! 🎉 La secuencia es **COMPLETAMENTE CORRECTA**. ¡Excelente trabajo!';
+            feedbackMessage = '¡Felicidades! 🎉 La secuencia es COMPLETAMENTE CORRECTA. ¡Excelente trabajo!';
             showMessage(feedbackMessage, 'bg-emerald-100 text-emerald-800');
             makeTtsRequest('Felicidades! La secuencia es completamente correcta. ¡Excelente trabajo!', 'feedback');
             // Cargar la siguiente rutina automáticamente después de un breve retraso
@@ -907,7 +907,7 @@
                  loadRoutine(currentKeys[nextIndex]);
             }, 3000);
         } else {
-            feedbackMessage = 'Aún no es correcto. 🧐 Revisa los pasos marcados en **rojo** e intenta intercambiarlos.';
+            feedbackMessage = 'Aún no es correcto. 🧐 Revisa los pasos marcados en rojo e intenta intercambiarlos.';
             showMessage(feedbackMessage, 'bg-rose-100 text-rose-800');
             makeTtsRequest('Aún no es correcto. Revisa los pasos marcados en rojo e intenta intercambiarlos.', 'feedback');
         }
@@ -1042,14 +1042,14 @@
             button.classList.add('emotion-primary');
             scoreGained = PRIMARY_SCORE;
             emotionScore += scoreGained;
-            feedbackText = `¡Súper! 🌟 La emoción principal era **${correctEmotion}**. Ganaste ${scoreGained} puntos.`;
+            feedbackText = `¡Súper! 🌟 La emoción principal era ${correctEmotion}. Ganaste ${scoreGained} puntos.`;
             makeTtsRequest(`Súper! La emoción principal era ${correctEmotion}. Ganaste ${scoreGained} puntos.`);
         } else if (secondaryEmotions.includes(selectedEmotionName)) {
             // Acierto secundario (emoción cercana)
             button.classList.add('emotion-secondary');
             scoreGained = SECONDARY_SCORE;
             emotionScore += scoreGained;
-            feedbackText = `¡Bien! 👍 **${selectedEmotionName}** es una emoción cercana a la principal (**${correctEmotion}**). Ganaste ${scoreGained} punto.`;
+            feedbackText = `¡Bien! 👍 ${selectedEmotionName} es una emoción cercana a la principal (${correctEmotion}). Ganaste ${scoreGained} punto.`;
              makeTtsRequest(`Bien! ${selectedEmotionName} es una emoción cercana a la principal. Ganaste ${scoreGained} punto.`);
         } else {
             // Error
@@ -1063,7 +1063,7 @@
                 }
             });
             
-            feedbackText = `Incorrecto. 😔 La emoción principal era **${correctEmotion}**. Sigue practicando.`;
+            feedbackText = `Incorrecto. 😔 La emoción principal era ${correctEmotion}. Sigue practicando.`;
             makeTtsRequest(`Incorrecto. La emoción principal era ${correctEmotion}. Sigue practicando.`);
         }
 
