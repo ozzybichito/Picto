@@ -178,9 +178,49 @@
 </div>
 
 <script type="module">
-    // 🔑 TU API KEY REAL (¡NO LA COMPARTAS!)
+    // 🔑 TU API KEY REAL
     const apiKey = "AIzaSyA9fRfC-z7WOUrwsL1Xl2gqaiAOtNFGNcc";
+    // ✅ Corregido: sin espacios en la URL
     const TEXT_API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+    // === DATOS (definidos AL PRINCIPIO para evitar errores) ===
+    const ROUTINES_DATA = {
+        morning: { title: "Reordena la Rutina de la Mañana (4 Pasos)", sequence: [{ emoji: '🛌', text: 'Despertar', value: 'despertar' }, { emoji: '🥣', text: 'Desayunar', value: 'desayunar' }, { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse' }, { emoji: '👕', text: 'Vestirse', value: 'vestirse' }] },
+        night: { title: "Reordena la Rutina de la Noche (6 Pasos)", sequence: [{ emoji: '🍽️', text: 'Cenar', value: 'cenar' }, { emoji: '🛀', text: 'Bañarse', value: 'bañarse' }, { emoji: '👚', text: 'Ponerse el Pijama', value: 'pijama' }, { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse_noche' }, { emoji: '📚', text: 'Leer un Cuento', value: 'cuento' }, { emoji: '😴', text: 'Dormir', value: 'dormir' }] },
+        school: { title: "Regreso a Casa (5 Pasos)", sequence: [{ emoji: '🎒', text: 'Quitarse la Mochila', value: 'mochila' }, { emoji: '👋', text: 'Lavar Manos', value: 'manos' }, { emoji: '🍎', text: 'Merendar', value: 'merendar' }, { emoji: '✏️', text: 'Hacer la Tarea', value: 'tarea' }, { emoji: '⚽', text: 'Jugar Tiempo Libre', value: 'jugar' }] },
+        outside: { title: "Rutina para Salir de Casa (5 Pasos)", sequence: [{ emoji: '🧦', text: 'Ponerse Calcetines', value: 'calcetines' }, { emoji: '👟', text: 'Ponerse Zapatos', value: 'zapatos' }, { emoji: '🧥', text: 'Ponerse Abrigo', value: 'abrigo' }, { emoji: '🔑', text: 'Tomar Llaves', value: 'llaves' }, { emoji: '🚪', text: 'Abrir Puerta y Salir', value: 'salir' }] },
+        teeth: { title: "Rutina de Cepillado Completo (4 Pasos)", sequence: [{ emoji: '🚰', text: 'Mojar el Cepillo', value: 'mojar' }, { emoji: '🧴', text: 'Poner Pasta', value: 'pasta' }, { emoji: '🦷', text: 'Cepillar por dos minutos', value: 'cepillar' }, { emoji: '💦', text: 'Enjuagar y Escupir', value: 'enjuagar' }] },
+        washing_hands: { title: "Rutina de Lavado de Manos (4 Pasos)", sequence: [{ emoji: '🚰', text: 'Abrir el Agua y Mojar', value: 'mojar_manos' }, { emoji: '🧼', text: 'Usar Jabón', value: 'jabon' }, { emoji: '🖐️', text: 'Frotar las manos', value: 'frotar' }, { emoji: '🧻', text: 'Secar con Toalla', value: 'secar' }] },
+        going_to_bathroom: { title: "Rutina de Usar el Baño (5 Pasos)", sequence: [{ emoji: '👖', text: 'Bajar la Ropa', value: 'bajar_ropa' }, { emoji: '🚽', text: 'Usar el Inodoro', value: 'usar_inodoro' }, { emoji: '🧻', text: 'Limpiarse', value: 'limpiarse' }, { emoji: '👆', text: 'Subir la Ropa', value: 'subir_ropa' }, { emoji: '👋', text: 'Lavar Manos', value: 'lavar_manos_final' }] },
+        bed_making: { title: "Rutina de Hacer la Cama (5 Pasos)", sequence: [{ emoji: '⬆️', text: 'Estirar la Sábana de Abajo', value: 'estirar_sabana' }, { emoji: '🛏️', text: 'Acomodar la Almohada', value: 'acomodar_almohada' }, { emoji: '🛌', text: 'Estirar la Frazada', value: 'estirar_frazada' }, { emoji: '🧸', text: 'Colocar los Peluches', value: 'colocar_adornos' }, { emoji: '✔️', text: 'Verificar el Orden', value: 'verificar_cama' }] },
+        snack: { title: "Preparación de Merienda (3 Pasos)", sequence: [{ emoji: '🚰', text: 'Lavar la Fruta', value: 'lavar' }, { emoji: '🔪', text: 'Cortar la Fruta', value: 'cortar' }, { emoji: '😋', text: 'Comer la Merienda', value: 'comer' }] },
+        table: { title: "Rutina de Poner la Mesa (4 Pasos)", sequence: [{ emoji: '🧺', text: 'Traer el Mantel', value: 'mantel' }, { emoji: '🍽️', text: 'Colocar los Platos', value: 'platos' }, { emoji: '🍴', text: 'Colocar los Cubiertos', value: 'cubiertos' }, { emoji: '🥛', text: 'Colocar los Vasos', value: 'vasos' }] },
+        pet_feeding: { title: "Rutina de Dar Comida a la Mascota (4 Pasos)", sequence: [{ emoji: '🥣', text: 'Tomar el Plato', value: 'tomar_plato' }, { emoji: '🥫', text: 'Servir la Comida', value: 'servir_comida' }, { emoji: '🐕', text: 'Colocar en Su Lugar', value: 'colocar_lugar' }, { emoji: '💧', text: 'Revisar el Agua', value: 'revisar_agua' }] },
+        laundry: { title: "Rutina de Poner Lavadora (5 Pasos)", sequence: [{ emoji: '🧺', text: 'Separar la Ropa (Color/Blanco)', value: 'separar_ropa' }, { emoji: '👕', text: 'Meter la Ropa a la Lavadora', value: 'meter_ropa' }, { emoji: '🧴', text: 'Poner Jabón', value: 'poner_jabon' }, { emoji: '⚙️', text: 'Seleccionar el Programa', value: 'seleccionar_programa' }, { emoji: '▶️', text: 'Presionar Inicio', value: 'inicio_lavado' }] },
+        taking_out_trash: { title: "Rutina de Sacar la Basura (4 Pasos)", sequence: [{ emoji: '🗑️', text: 'Recoger las Bolsas de Basura', value: 'recoger_bolsas' }, { emoji: '🚪', text: 'Abrir la Puerta y Salir', value: 'abrir_puerta' }, { emoji: '🚛', text: 'Depositar en el Contenedor', value: 'depositar' }, { emoji: '👋', text: 'Lavar Manos al Volver', value: 'lavar_manos_basura' }] },
+        watering_plants: { title: "Rutina de Regar Plantas (4 Pasos)", sequence: [{ emoji: '🚰', text: 'Llenar la Regadera con Agua', value: 'llenar_regadera' }, { emoji: '🪴', text: 'Ir a las Plantas', value: 'ir_plantas' }, { emoji: '💦', text: 'Regar con Cuidado', value: 'regar' }, { emoji: '☀️', text: 'Guardar la Regadera', value: 'guardar_regadera' }] },
+        buying_food: { title: "Rutina de Comprar en la Tienda (5 Pasos)", sequence: [{ emoji: '🛍️', text: 'Tomar la Bolsa Reutilizable', value: 'bolsa' }, { emoji: '🛒', text: 'Buscar Productos', value: 'buscar_productos' }, { emoji: '💰', text: 'Pagar en Caja', value: 'pagar' }, { emoji: '🚶', text: 'Regresar a Casa', value: 'regresar' }, { emoji: '📦', text: 'Guardar las Compras', value: 'guardar_compras' }] },
+        drawing: { title: "Preparación para Dibujar (4 Pasos)", sequence: [{ emoji: '🖍️', text: 'Sacar Lápices de Colores', value: 'sacar_lapices' }, { emoji: '📄', text: 'Poner la Hoja en la Mesa', value: 'poner_hoja' }, { emoji: '🎨', text: 'Empezar a Dibujar', value: 'empezar_dibujar' }, { emoji: '🗑️', text: 'Recoger el Material', value: 'recoger_material' }] },
+        cleaning_desk: { title: "Rutina de Limpiar Escritorio (4 Pasos)", sequence: [{ emoji: '📚', text: 'Quitar libros y objetos', value: 'quitar_objetos' }, { emoji: '🧽', text: 'Pasar el paño húmedo', value: 'pasar_pano' }, { emoji: '🗑️', text: 'Vaciar la papelera', value: 'vaciar_papelera' }, { emoji: '✔️', text: 'Organizar el material', value: 'organizar_material' }] },
+        playground: { title: "Rutina de Ir al Parque (5 Pasos)", sequence: [{ emoji: '☀️', text: 'Poner Bloqueador Solar', value: 'bloqueador' }, { emoji: '👟', text: 'Poner Zapatos', value: 'zapatos_parque' }, { emoji: '🔑', text: 'Tomar Pelota o Juguete', value: 'tomar_juguete' }, { emoji: '🚶', text: 'Caminar al Parque', value: 'caminar' }, { emoji: '⚽', text: 'Empezar a Jugar', value: 'empezar_jugar' }] },
+        birthday: { title: "Preparar un Cumpleaños (5 Pasos)", sequence: [{ emoji: '🎈', text: 'Inflar y Colgar Globos', value: 'colgar_globos' }, { emoji: '🎂', text: 'Poner el Pastel en la Mesa', value: 'poner_pastel' }, { emoji: '🎁', text: 'Colocar los Regalos', value: 'colocar_regalos' }, { emoji: '🎶', text: 'Poner Música', value: 'poner_musica' }, { emoji: '🛎️', text: 'Esperar a los Invitados', value: 'esperar_invitados' }] },
+        homework_start: { title: "Empezar Tarea (4 Pasos)", sequence: [{ emoji: '🍎', text: 'Tomar un Vaso de Agua', value: 'agua_tarea' }, { emoji: '📚', text: 'Sacar Cuadernos Necesarios', value: 'sacar_cuadernos' }, { emoji: '🪑', text: 'Sentarse en el Escritorio', value: 'sentarse' }, { emoji: '🧠', text: 'Concentrarse y Empezar', value: 'empezar_concentrarse' }] }
+    };
+
+    const EMOTION_DATA = [
+        { name: 'Feliz', emoji: '😊', color: 'green' },
+        { name: 'Triste', emoji: '😢', color: 'blue' },
+        { name: 'Enojado', emoji: '😡', color: 'red' },
+        { name: 'Asustado', emoji: '😨', color: 'purple' },
+        { name: 'Calmado', emoji: '😌', color: 'teal' },
+        { name: 'Sorprendido', emoji: '😲', color: 'orange' },
+        { name: 'Pensativo', emoji: '🤔', color: 'indigo' }, 
+        { name: 'Aburrido', emoji: '😑', color: 'gray' },
+        { name: 'Avergonzado', emoji: '😳', color: 'pink' },
+        { name: 'Orgulloso', emoji: '😎', color: 'lime' },
+        { name: 'Decepción', emoji: '😞', color: 'brown' },
+        { name: 'Nervioso', emoji: '😬', color: 'yellow' }
+    ];
 
     // Variables globales
     let currentMode = 'A';
@@ -211,7 +251,7 @@
     const today = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
     authStatusEl.innerHTML = `Fecha: ${today} | Desarrollado por: Jason Dafnis`;
 
-    // === TTS con Web Speech API (sin API key, funciona en Chrome/Edge/Safari) ===
+    // === TTS con Web Speech API (optimizado para móviles) ===
     function speakText(text) {
         if (!text || typeof speechSynthesis === 'undefined') return;
         speechSynthesis.cancel();
@@ -220,6 +260,7 @@
         utterance.rate = 0.9;
         utterance.pitch = 1.0;
 
+        // Intentar usar voz en español
         const voices = speechSynthesis.getVoices();
         const spanishVoice = voices.find(v => v.lang.startsWith('es-ES'));
         if (spanishVoice) utterance.voice = spanishVoice;
@@ -227,7 +268,7 @@
         speechSynthesis.speak(utterance);
     }
 
-    // Cargar voces al inicio
+    // Cargar voces al inicio (crítico en iOS/Safari)
     if (speechSynthesis.onvoiceschanged !== undefined) {
         speechSynthesis.onvoiceschanged = () => {};
     }
@@ -248,10 +289,6 @@
         messageBox.classList.remove('hidden');
         setTimeout(() => messageBox.classList.add('hidden'), 8000);
     }
-
-    // === DATOS ===
-    const ROUTINES_DATA = { /* ... (igual que en tu código original) ... */ };
-    const EMOTION_DATA = [ /* ... (igual que en tu código original) ... */ ];
 
     // === MODO A ===
     let currentSequence = [];
@@ -495,47 +532,9 @@
     // === INICIO ===
     window.onload = () => {
         switchMode('A');
+        // Cargar voces después de un breve retraso (mejora compatibilidad móvil)
         setTimeout(() => speechSynthesis.getVoices(), 500);
     };
-
-    // === DATOS COMPLETOS (copiados de tu archivo original) ===
-    const ROUTINES_DATA = {
-        morning: { title: "Reordena la Rutina de la Mañana (4 Pasos)", sequence: [{ emoji: '🛌', text: 'Despertar', value: 'despertar' }, { emoji: '🥣', text: 'Desayunar', value: 'desayunar' }, { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse' }, { emoji: '👕', text: 'Vestirse', value: 'vestirse' }] },
-        night: { title: "Reordena la Rutina de la Noche (6 Pasos)", sequence: [{ emoji: '🍽️', text: 'Cenar', value: 'cenar' }, { emoji: '🛀', text: 'Bañarse', value: 'bañarse' }, { emoji: '👚', text: 'Ponerse el Pijama', value: 'pijama' }, { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse_noche' }, { emoji: '📚', text: 'Leer un Cuento', value: 'cuento' }, { emoji: '😴', text: 'Dormir', value: 'dormir' }] },
-        school: { title: "Regreso a Casa (5 Pasos)", sequence: [{ emoji: '🎒', text: 'Quitarse la Mochila', value: 'mochila' }, { emoji: '👋', text: 'Lavar Manos', value: 'manos' }, { emoji: '🍎', text: 'Merendar', value: 'merendar' }, { emoji: '✏️', text: 'Hacer la Tarea', value: 'tarea' }, { emoji: '⚽', text: 'Jugar Tiempo Libre', value: 'jugar' }] },
-        outside: { title: "Rutina para Salir de Casa (5 Pasos)", sequence: [{ emoji: '🧦', text: 'Ponerse Calcetines', value: 'calcetines' }, { emoji: '👟', text: 'Ponerse Zapatos', value: 'zapatos' }, { emoji: '🧥', text: 'Ponerse Abrigo', value: 'abrigo' }, { emoji: '🔑', text: 'Tomar Llaves', value: 'llaves' }, { emoji: '🚪', text: 'Abrir Puerta y Salir', value: 'salir' }] },
-        teeth: { title: "Rutina de Cepillado Completo (4 Pasos)", sequence: [{ emoji: '🚰', text: 'Mojar el Cepillo', value: 'mojar' }, { emoji: '🧴', text: 'Poner Pasta', value: 'pasta' }, { emoji: '🦷', text: 'Cepillar por dos minutos', value: 'cepillar' }, { emoji: '💦', text: 'Enjuagar y Escupir', value: 'enjuagar' }] },
-        washing_hands: { title: "Rutina de Lavado de Manos (4 Pasos)", sequence: [{ emoji: '🚰', text: 'Abrir el Agua y Mojar', value: 'mojar_manos' }, { emoji: '🧼', text: 'Usar Jabón', value: 'jabon' }, { emoji: '🖐️', text: 'Frotar las manos', value: 'frotar' }, { emoji: '🧻', text: 'Secar con Toalla', value: 'secar' }] },
-        going_to_bathroom: { title: "Rutina de Usar el Baño (5 Pasos)", sequence: [{ emoji: '👖', text: 'Bajar la Ropa', value: 'bajar_ropa' }, { emoji: '🚽', text: 'Usar el Inodoro', value: 'usar_inodoro' }, { emoji: '🧻', text: 'Limpiarse', value: 'limpiarse' }, { emoji: '👆', text: 'Subir la Ropa', value: 'subir_ropa' }, { emoji: '👋', text: 'Lavar Manos', value: 'lavar_manos_final' }] },
-        bed_making: { title: "Rutina de Hacer la Cama (5 Pasos)", sequence: [{ emoji: '⬆️', text: 'Estirar la Sábana de Abajo', value: 'estirar_sabana' }, { emoji: '🛏️', text: 'Acomodar la Almohada', value: 'acomodar_almohada' }, { emoji: '🛌', text: 'Estirar la Frazada', value: 'estirar_frazada' }, { emoji: '🧸', text: 'Colocar los Peluches', value: 'colocar_adornos' }, { emoji: '✔️', text: 'Verificar el Orden', value: 'verificar_cama' }] },
-        snack: { title: "Preparación de Merienda (3 Pasos)", sequence: [{ emoji: '🚰', text: 'Lavar la Fruta', value: 'lavar' }, { emoji: '🔪', text: 'Cortar la Fruta', value: 'cortar' }, { emoji: '😋', text: 'Comer la Merienda', value: 'comer' }] },
-        table: { title: "Rutina de Poner la Mesa (4 Pasos)", sequence: [{ emoji: '🧺', text: 'Traer el Mantel', value: 'mantel' }, { emoji: '🍽️', text: 'Colocar los Platos', value: 'platos' }, { emoji: '🍴', text: 'Colocar los Cubiertos', value: 'cubiertos' }, { emoji: '🥛', text: 'Colocar los Vasos', value: 'vasos' }] },
-        pet_feeding: { title: "Rutina de Dar Comida a la Mascota (4 Pasos)", sequence: [{ emoji: '🥣', text: 'Tomar el Plato', value: 'tomar_plato' }, { emoji: '🥫', text: 'Servir la Comida', value: 'servir_comida' }, { emoji: '🐕', text: 'Colocar en Su Lugar', value: 'colocar_lugar' }, { emoji: '💧', text: 'Revisar el Agua', value: 'revisar_agua' }] },
-        laundry: { title: "Rutina de Poner Lavadora (5 Pasos)", sequence: [{ emoji: '🧺', text: 'Separar la Ropa (Color/Blanco)', value: 'separar_ropa' }, { emoji: '👕', text: 'Meter la Ropa a la Lavadora', value: 'meter_ropa' }, { emoji: '🧴', text: 'Poner Jabón', value: 'poner_jabon' }, { emoji: '⚙️', text: 'Seleccionar el Programa', value: 'seleccionar_programa' }, { emoji: '▶️', text: 'Presionar Inicio', value: 'inicio_lavado' }] },
-        taking_out_trash: { title: "Rutina de Sacar la Basura (4 Pasos)", sequence: [{ emoji: '🗑️', text: 'Recoger las Bolsas de Basura', value: 'recoger_bolsas' }, { emoji: '🚪', text: 'Abrir la Puerta y Salir', value: 'abrir_puerta' }, { emoji: '🚛', text: 'Depositar en el Contenedor', value: 'depositar' }, { emoji: '👋', text: 'Lavar Manos al Volver', value: 'lavar_manos_basura' }] },
-        watering_plants: { title: "Rutina de Regar Plantas (4 Pasos)", sequence: [{ emoji: '🚰', text: 'Llenar la Regadera con Agua', value: 'llenar_regadera' }, { emoji: '🪴', text: 'Ir a las Plantas', value: 'ir_plantas' }, { emoji: '💦', text: 'Regar con Cuidado', value: 'regar' }, { emoji: '☀️', text: 'Guardar la Regadera', value: 'guardar_regadera' }] },
-        buying_food: { title: "Rutina de Comprar en la Tienda (5 Pasos)", sequence: [{ emoji: '🛍️', text: 'Tomar la Bolsa Reutilizable', value: 'bolsa' }, { emoji: '🛒', text: 'Buscar Productos', value: 'buscar_productos' }, { emoji: '💰', text: 'Pagar en Caja', value: 'pagar' }, { emoji: '🚶', text: 'Regresar a Casa', value: 'regresar' }, { emoji: '📦', text: 'Guardar las Compras', value: 'guardar_compras' }] },
-        drawing: { title: "Preparación para Dibujar (4 Pasos)", sequence: [{ emoji: '🖍️', text: 'Sacar Lápices de Colores', value: 'sacar_lapices' }, { emoji: '📄', text: 'Poner la Hoja en la Mesa', value: 'poner_hoja' }, { emoji: '🎨', text: 'Empezar a Dibujar', value: 'empezar_dibujar' }, { emoji: '🗑️', text: 'Recoger el Material', value: 'recoger_material' }] },
-        cleaning_desk: { title: "Rutina de Limpiar Escritorio (4 Pasos)", sequence: [{ emoji: '📚', text: 'Quitar libros y objetos', value: 'quitar_objetos' }, { emoji: '🧽', text: 'Pasar el paño húmedo', value: 'pasar_pano' }, { emoji: '🗑️', text: 'Vaciar la papelera', value: 'vaciar_papelera' }, { emoji: '✔️', text: 'Organizar el material', value: 'organizar_material' }] },
-        playground: { title: "Rutina de Ir al Parque (5 Pasos)", sequence: [{ emoji: '☀️', text: 'Poner Bloqueador Solar', value: 'bloqueador' }, { emoji: '👟', text: 'Poner Zapatos', value: 'zapatos_parque' }, { emoji: '🔑', text: 'Tomar Pelota o Juguete', value: 'tomar_juguete' }, { emoji: '🚶', text: 'Caminar al Parque', value: 'caminar' }, { emoji: '⚽', text: 'Empezar a Jugar', value: 'empezar_jugar' }] },
-        birthday: { title: "Preparar un Cumpleaños (5 Pasos)", sequence: [{ emoji: '🎈', text: 'Inflar y Colgar Globos', value: 'colgar_globos' }, { emoji: '🎂', text: 'Poner el Pastel en la Mesa', value: 'poner_pastel' }, { emoji: '🎁', text: 'Colocar los Regalos', value: 'colocar_regalos' }, { emoji: '🎶', text: 'Poner Música', value: 'poner_musica' }, { emoji: '🛎️', text: 'Esperar a los Invitados', value: 'esperar_invitados' }] },
-        homework_start: { title: "Empezar Tarea (4 Pasos)", sequence: [{ emoji: '🍎', text: 'Tomar un Vaso de Agua', value: 'agua_tarea' }, { emoji: '📚', text: 'Sacar Cuadernos Necesarios', value: 'sacar_cuadernos' }, { emoji: '🪑', text: 'Sentarse en el Escritorio', value: 'sentarse' }, { emoji: '🧠', text: 'Concentrarse y Empezar', value: 'empezar_concentrarse' }] }
-    };
-
-    const EMOTION_DATA = [
-        { name: 'Feliz', emoji: '😊', color: 'green' },
-        { name: 'Triste', emoji: '😢', color: 'blue' },
-        { name: 'Enojado', emoji: '😡', color: 'red' },
-        { name: 'Asustado', emoji: '😨', color: 'purple' },
-        { name: 'Calmado', emoji: '😌', color: 'teal' },
-        { name: 'Sorprendido', emoji: '😲', color: 'orange' },
-        { name: 'Pensativo', emoji: '🤔', color: 'indigo' }, 
-        { name: 'Aburrido', emoji: '😑', color: 'gray' },
-        { name: 'Avergonzado', emoji: '😳', color: 'pink' },
-        { name: 'Orgulloso', emoji: '😎', color: 'lime' },
-        { name: 'Decepción', emoji: '😞', color: 'brown' },
-        { name: 'Nervioso', emoji: '😬', color: 'yellow' }
-    ];
 </script>
 </body>
 </html>
