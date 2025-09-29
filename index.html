@@ -178,12 +178,7 @@
 </div>
 
 <script type="module">
-    // 🔑 TU API KEY REAL
-    const apiKey = "AIzaSyA9fRfC-z7WOUrwsL1Xl2gqaiAOtNFGNcc";
-    // ✅ Corregido: sin espacios en la URL
-    const TEXT_API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
-    // === DATOS (definidos AL PRINCIPIO para evitar errores) ===
+    // === DATOS LOCALES ===
     const ROUTINES_DATA = {
         morning: { title: "Reordena la Rutina de la Mañana (4 Pasos)", sequence: [{ emoji: '🛌', text: 'Despertar', value: 'despertar' }, { emoji: '🥣', text: 'Desayunar', value: 'desayunar' }, { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse' }, { emoji: '👕', text: 'Vestirse', value: 'vestirse' }] },
         night: { title: "Reordena la Rutina de la Noche (6 Pasos)", sequence: [{ emoji: '🍽️', text: 'Cenar', value: 'cenar' }, { emoji: '🛀', text: 'Bañarse', value: 'bañarse' }, { emoji: '👚', text: 'Ponerse el Pijama', value: 'pijama' }, { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse_noche' }, { emoji: '📚', text: 'Leer un Cuento', value: 'cuento' }, { emoji: '😴', text: 'Dormir', value: 'dormir' }] },
@@ -222,6 +217,22 @@
         { name: 'Nervioso', emoji: '😬', color: 'yellow' }
     ];
 
+    // === ESCENARIOS LOCALES PARA MODO B ===
+    const EMOTION_SCENARIOS = [
+        { scenario: "Luis terminó su tarea y su mamá le dijo: ¡Muy bien, estoy orgullosa de ti!", primary: "Orgulloso", secondary: ["Feliz"] },
+        { scenario: "María vio una araña gigante en el baño y gritó del susto.", primary: "Asustado", secondary: ["Nervioso"] },
+        { scenario: "Carlos se cayó en el patio y se raspó la rodilla. Le duele mucho.", primary: "Triste", secondary: ["Decepción"] },
+        { scenario: "Ana esperaba un helado, pero se derritió antes de comérselo.", primary: "Decepción", secondary: ["Triste"] },
+        { scenario: "Tomás ganó el primer lugar en la carrera de la escuela.", primary: "Feliz", secondary: ["Orgulloso"] },
+        { scenario: "Lucía tiene que hablar frente a toda la clase y le late el corazón muy rápido.", primary: "Nervioso", secondary: ["Asustado"] },
+        { scenario: "Diego se olvidó de hacer su tarea y el profesor se enojó.", primary: "Avergonzado", secondary: ["Triste"] },
+        { scenario: "Sofía está sentada en silencio, mirando las nubes y pensando en su cumpleaños.", primary: "Pensativo", secondary: ["Calmado"] },
+        { scenario: "Pablo lleva una hora esperando a su amigo y aún no llega.", primary: "Aburrido", secondary: ["Decepción"] },
+        { scenario: "Valentina vio un mago hacer desaparecer una moneda y abrió los ojos como platos.", primary: "Sorprendido", secondary: ["Feliz"] },
+        { scenario: "Mateo respira profundo y cierra los ojos después de un día largo.", primary: "Calmado", secondary: ["Feliz"] },
+        { scenario: "Emma no compartió sus juguetes y su hermano se puso a llorar.", primary: "Enojado", secondary: ["Avergonzado"] }
+    ];
+
     // Variables globales
     let currentMode = 'A';
     let isLocked = false;
@@ -251,7 +262,7 @@
     const today = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
     authStatusEl.innerHTML = `Fecha: ${today} | Desarrollado por: Jason Dafnis`;
 
-    // === TTS con Web Speech API (optimizado para móviles) ===
+    // === TTS con Web Speech API (nativo del navegador) ===
     function speakText(text) {
         if (!text || typeof speechSynthesis === 'undefined') return;
         speechSynthesis.cancel();
@@ -260,7 +271,6 @@
         utterance.rate = 0.9;
         utterance.pitch = 1.0;
 
-        // Intentar usar voz en español
         const voices = speechSynthesis.getVoices();
         const spanishVoice = voices.find(v => v.lang.startsWith('es-ES'));
         if (spanishVoice) utterance.voice = spanishVoice;
@@ -268,7 +278,6 @@
         speechSynthesis.speak(utterance);
     }
 
-    // Cargar voces al inicio (crítico en iOS/Safari)
     if (speechSynthesis.onvoiceschanged !== undefined) {
         speechSynthesis.onvoiceschanged = () => {};
     }
@@ -384,48 +393,27 @@
         renderSequence();
     }
 
-    // === MODO B ===
+    // === MODO B (100% LOCAL) ===
     let currentTargetResponse = null;
 
-    async function requestNewScenario() {
+    function requestNewScenario() {
         scenarioLoader.classList.remove('hidden');
-        targetScenarioText.textContent = 'Cargando un nuevo escenario emocional...';
+        targetScenarioText.textContent = 'Preparando nuevo desafío...';
         isLocked = true;
-        try {
-            const prompt = `Actúa como un psicólogo infantil experto en autismo y crea un escenario breve y realista (máximo 40 palabras) donde un niño o niña experimenta una emoción clara. La emoción DEBE ser una de las siguientes: Feliz, Triste, Enojado, Asustado, Calmado, Sorprendido, Pensativo, Aburrido, Avergonzado, Orgulloso, Decepción, Nervioso. 
-            Devuelve la respuesta como un objeto JSON estricto con la siguiente estructura:
-            {
-              "scenario": "Descripción del escenario.",
-              "primary_emotion": "Emoción principal que experimenta el niño (de la lista proporcionada).",
-              "secondary_emotions": ["Emoción secundaria o cercana (de la lista)"]
-            }`;
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                    responseMimeType: "application/json"
-                }
+
+        setTimeout(() => {
+            const randomScenario = EMOTION_SCENARIOS[Math.floor(Math.random() * EMOTION_SCENARIOS.length)];
+            currentTargetResponse = {
+                scenario: randomScenario.scenario,
+                primary_emotion: randomScenario.primary,
+                secondary_emotions: randomScenario.secondary || []
             };
-            const res = await fetch(TEXT_API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if (!res.ok) throw new Error(`API error: ${res.status}`);
-            const data = await res.json();
-            const jsonText = data.candidates[0].content.parts[0].text;
-            const parsed = JSON.parse(jsonText);
-            currentTargetResponse = parsed;
-            targetScenarioText.textContent = parsed.scenario;
+            targetScenarioText.textContent = randomScenario.scenario;
             scenarioLoader.classList.add('hidden');
             isLocked = false;
-            generateEmotionOptions(parsed.primary_emotion);
-            speakText(parsed.scenario);
-        } catch (error) {
-            console.error("Error:", error);
-            targetScenarioText.textContent = '❌ Error al cargar el desafío. Intenta de nuevo.';
-            scenarioLoader.classList.add('hidden');
-            isLocked = true;
-        }
+            generateEmotionOptions(randomScenario.primary);
+            speakText(randomScenario.scenario);
+        }, 300);
     }
 
     function generateEmotionOptions(correctName) {
@@ -532,7 +520,6 @@
     // === INICIO ===
     window.onload = () => {
         switchMode('A');
-        // Cargar voces después de un breve retraso (mejora compatibilidad móvil)
         setTimeout(() => speechSynthesis.getVoices(), 500);
     };
 </script>
