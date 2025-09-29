@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PictoPlan - Secuencias Diarias y Emociones</title>
+    <title>PictoPlan - Secuencias Diarias</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -16,27 +16,27 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
         .filled-drop-zone {
-            border: 2px solid #3b82f6; 
+            border: 2px solid #3b82f6;
             background-color: #dbeafe;
-            cursor: pointer; 
+            cursor: pointer;
             transition: all 0.2s;
         }
         .filled-drop-zone:active {
-             transform: scale(0.99);
+            transform: scale(0.99);
         }
         .selected-picto {
-            border: 4px solid #f59e0b !important; 
+            border: 4px solid #f59e0b !important;
             background-color: #fffbeb !important;
             box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
             transform: scale(1.02);
         }
         .picto-correct {
-            border: 4px solid #059669 !important; 
-            background-color: #d1fae5 !important; 
+            border: 4px solid #059669 !important;
+            background-color: #d1fae5 !important;
         }
         .picto-incorrect {
-            border: 4px solid #ef4444 !important; 
-            background-color: #fee2e2 !important; 
+            border: 4px solid #ef4444 !important;
+            background-color: #fee2e2 !important;
         }
         #routine-selector {
             appearance: none;
@@ -48,56 +48,6 @@
             color: #1f2937;
             text-align: center;
         }
-        .emotion-option {
-            background-color: #ffffff;
-            border: 2px solid #a8a29e;
-            transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            min-height: 120px; 
-            padding-top: 16px; 
-            padding-bottom: 16px;
-            text-align: center;
-        }
-        .emotion-option:hover {
-            border-color: #fb7185;
-            transform: translateY(-2px);
-        }
-        .emotion-option:active {
-            transform: scale(0.98);
-        }
-        .emotion-primary {
-            border: 4px solid #059669 !important; 
-            background-color: #d1fae5 !important;
-            box-shadow: 0 0 15px #059669;
-        }
-        .emotion-secondary {
-            border: 4px solid #84cc16 !important; 
-            background-color: #f0fdf4 !important;
-            box-shadow: 0 0 10px #84cc16;
-        }
-        .emotion-incorrect {
-            border: 4px solid #ef4444 !important; 
-            background-color: #fee2e2 !important;
-        }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #fb7185;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-        }
-        #scenario-output-box {
-            cursor: pointer;
-            transition: transform 0.1s ease-in-out;
-        }
-        #scenario-output-box:active {
-            transform: scale(0.99);
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
@@ -106,18 +56,11 @@
         <h1 class="text-2xl font-extrabold text-center">PictoPlan</h1>
         <p id="auth-status" class="text-sm text-center mt-1 opacity-90 font-medium">Desarrollado por: Jason Dafnis</p>
     </header>
-    <div class="w-full flex justify-center bg-white shadow-md p-2">
-        <button id="mode-a-button" class="flex-1 py-2 px-4 text-sm font-bold rounded-l-xl transition-colors border-b-4 border-blue-600 text-blue-600">
-            1. Secuencias Diarias
-        </button>
-        <button id="mode-b-button" class="flex-1 py-2 px-4 text-sm font-bold rounded-r-xl transition-colors text-gray-500 hover:text-blue-500 border-b-4 border-transparent">
-            2. Detective Emocional
-        </button>
-    </div>
+
     <main class="flex flex-col flex-grow w-full p-4 space-y-4">
         <div id="message-box" class="p-3 text-center rounded-xl font-semibold hidden transition-all"></div>
 
-        <!-- MODO A -->
+        <!-- MODO A: Secuencias Diarias -->
         <div id="mode-a-content" class="w-full flex flex-col space-y-4">
             <div class="flex flex-col items-center space-y-2">
                 <label for="routine-selector" class="text-md font-semibold text-gray-700">Selecciona la Rutina (20 opciones):</label>
@@ -153,32 +96,11 @@
                 Verificar Secuencia
             </button>
         </div>
-
-        <!-- MODO B -->
-        <div id="mode-b-content" class="w-full flex flex-col space-y-6 hidden">
-            <h2 class="text-2xl font-bold text-center text-pink-600">Detective Emocional 🧠</h2>
-            <p class="text-base text-gray-600 text-center">
-                Lee el escenario y elige el pictograma de la emoción correcta. ¡Haz clic en el recuadro amarillo para escucharlo de nuevo!
-            </p>
-            <div class="p-3 bg-indigo-100 rounded-xl shadow-md border border-indigo-400 text-center">
-                <p class="text-sm font-medium text-indigo-700">Puntuación Local:</p>
-                <p id="local-score-display" class="text-2xl font-extrabold text-indigo-900">0 Puntos</p>
-            </div>
-            <div id="scenario-output-box"
-                 class="p-6 bg-yellow-100 rounded-xl shadow-inner border-2 border-yellow-400 flex flex-col items-center space-y-4 min-h-[150px] justify-center relative">
-                <p id="target-scenario-text" class="text-lg p-3 font-semibold text-gray-700 text-center italic w-full">Cargando escenario...</p>
-                <div id="scenario-loader" class="loader"></div>
-            </div>
-            <div id="emotion-options-grid" class="grid grid-cols-2 gap-4"></div>
-            <button id="next-emotion-button" class="w-full py-4 text-white text-xl font-bold bg-pink-500 hover:bg-pink-600 rounded-2xl transition-all shadow-lg active:scale-[0.98]">
-                Siguiente Desafío
-            </button>
-        </div>
     </main>
 </div>
 
 <script type="module">
-    // === DATOS LOCALES (100% offline) ===
+    // === DATOS LOCALES ===
     const ROUTINES_DATA = {
         morning: { title: "Reordena la Rutina de la Mañana (4 Pasos)", sequence: [{ emoji: '🛌', text: 'Despertar', value: 'despertar' }, { emoji: '🥣', text: 'Desayunar', value: 'desayunar' }, { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse' }, { emoji: '👕', text: 'Vestirse', value: 'vestirse' }] },
         night: { title: "Reordena la Rutina de la Noche (6 Pasos)", sequence: [{ emoji: '🍽️', text: 'Cenar', value: 'cenar' }, { emoji: '🛀', text: 'Bañarse', value: 'bañarse' }, { emoji: '👚', text: 'Ponerse el Pijama', value: 'pijama' }, { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse_noche' }, { emoji: '📚', text: 'Leer un Cuento', value: 'cuento' }, { emoji: '😴', text: 'Dormir', value: 'dormir' }] },
@@ -202,78 +124,27 @@
         homework_start: { title: "Empezar Tarea (4 Pasos)", sequence: [{ emoji: '🍎', text: 'Tomar un Vaso de Agua', value: 'agua_tarea' }, { emoji: '📚', text: 'Sacar Cuadernos Necesarios', value: 'sacar_cuadernos' }, { emoji: '🪑', text: 'Sentarse en el Escritorio', value: 'sentarse' }, { emoji: '🧠', text: 'Concentrarse y Empezar', value: 'empezar_concentrarse' }] }
     };
 
-    const EMOTION_DATA = [
-        { name: 'Feliz', emoji: '😊', color: 'green' },
-        { name: 'Triste', emoji: '😢', color: 'blue' },
-        { name: 'Enojado', emoji: '😡', color: 'red' },
-        { name: 'Asustado', emoji: '😨', color: 'purple' },
-        { name: 'Calmado', emoji: '😌', color: 'teal' },
-        { name: 'Sorprendido', emoji: '😲', color: 'orange' },
-        { name: 'Pensativo', emoji: '🤔', color: 'indigo' }, 
-        { name: 'Aburrido', emoji: '😑', color: 'gray' },
-        { name: 'Avergonzado', emoji: '😳', color: 'pink' },
-        { name: 'Orgulloso', emoji: '😎', color: 'lime' },
-        { name: 'Decepción', emoji: '😞', color: 'brown' },
-        { name: 'Nervioso', emoji: '😬', color: 'yellow' }
-    ];
-
-    const EMOTION_SCENARIOS = [
-        { scenario: "Luis terminó su tarea y su mamá le dijo: ¡Muy bien, estoy orgullosa de ti!", primary: "Orgulloso", secondary: ["Feliz"] },
-        { scenario: "María vio una araña gigante en el baño y gritó del susto.", primary: "Asustado", secondary: ["Nervioso"] },
-        { scenario: "Carlos se cayó en el patio y se raspó la rodilla. Le duele mucho.", primary: "Triste", secondary: ["Decepción"] },
-        { scenario: "Ana esperaba un helado, pero se derritió antes de comérselo.", primary: "Decepción", secondary: ["Triste"] },
-        { scenario: "Tomás ganó el primer lugar en la carrera de la escuela.", primary: "Feliz", secondary: ["Orgulloso"] },
-        { scenario: "Lucía tiene que hablar frente a toda la clase y le late el corazón muy rápido.", primary: "Nervioso", secondary: ["Asustado"] },
-        { scenario: "Diego se olvidó de hacer su tarea y el profesor se enojó.", primary: "Avergonzado", secondary: ["Triste"] },
-        { scenario: "Sofía está sentada en silencio, mirando las nubes y pensando en su cumpleaños.", primary: "Pensativo", secondary: ["Calmado"] },
-        { scenario: "Pablo lleva una hora esperando a su amigo y aún no llega.", primary: "Aburrido", secondary: ["Decepción"] },
-        { scenario: "Valentina vio un mago hacer desaparecer una moneda y abrió los ojos como platos.", primary: "Sorprendido", secondary: ["Feliz"] },
-        { scenario: "Mateo respira profundo y cierra los ojos después de un día largo.", primary: "Calmado", secondary: ["Feliz"] },
-        { scenario: "Emma no compartió sus juguetes y su hermano se puso a llorar.", primary: "Enojado", secondary: ["Avergonzado"] }
-    ];
-
-    // Variables globales
-    let currentMode = 'A';
-    let isLocked = false;
-    let emotionScore = 0;
-    const LOCAL_STORAGE_KEY = 'PictoPlanScore';
-    const PRIMARY_SCORE = 3;
-    const SECONDARY_SCORE = 1;
-
     // DOM Elements
-    const modeAButton = document.getElementById('mode-a-button');
-    const modeBButton = document.getElementById('mode-b-button');
-    const modeAContent = document.getElementById('mode-a-content');
-    const modeBContent = document.getElementById('mode-b-content');
-    const messageBox = document.getElementById('message-box');
-    const authStatusEl = document.getElementById('auth-status');
     const dropTargetsEl = document.getElementById('drop-targets');
     const routineTitleEl = document.getElementById('routine-title');
     const routineSelectorEl = document.getElementById('routine-selector');
     const checkButton = document.getElementById('check-button');
-    const scenarioOutputBox = document.getElementById('scenario-output-box');
-    const targetScenarioText = document.getElementById('target-scenario-text');
-    const scenarioLoader = document.getElementById('scenario-loader');
-    const emotionOptionsGrid = document.getElementById('emotion-options-grid');
-    const nextEmotionButton = document.getElementById('next-emotion-button');
-    const localScoreDisplay = document.getElementById('local-score-display');
+    const messageBox = document.getElementById('message-box');
+    const authStatusEl = document.getElementById('auth-status');
 
     const today = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
     authStatusEl.innerHTML = `Fecha: ${today} | Desarrollado por: Jason Dafnis`;
 
-    // === TTS con Web Speech API (nativo del navegador) ===
+    // === TTS con Web Speech API ===
     function speakText(text) {
         if (!text || typeof speechSynthesis === 'undefined') return;
         speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'es-ES';
         utterance.rate = 0.9;
-        utterance.pitch = 1.0;
-
         const voices = speechSynthesis.getVoices();
         const spanishVoice = voices.find(v => v.lang.startsWith('es-ES'));
         if (spanishVoice) utterance.voice = spanishVoice;
-
         speechSynthesis.speak(utterance);
     }
 
@@ -392,28 +263,15 @@
         renderSequence();
     }
 
-    // === MODO B ===
-    let currentTargetResponse = null;
+    // === EVENTOS ===
+    routineSelectorEl.addEventListener('change', (e) => loadRoutine(e.target.value));
+    checkButton.addEventListener('click', checkSequence);
 
-    function requestNewScenario() {
-        scenarioLoader.classList.remove('hidden');
-        targetScenarioText.textContent = 'Preparando nuevo desafío...';
-        isLocked = true;
-
-        setTimeout(() => {
-            const randomScenario = EMOTION_SCENARIOS[Math.floor(Math.random() * EMOTION_SCENARIOS.length)];
-            currentTargetResponse = {
-                scenario: randomScenario.scenario,
-                primary_emotion: randomScenario.primary,
-                secondary_emotions: randomScenario.secondary || []
-            };
-            targetScenarioText.textContent = randomScenario.scenario;
-            scenarioLoader.classList.add('hidden');
-            isLocked = false;
-            generateEmotionOptions(randomScenario.primary);
-            speakText(randomScenario.scenario);
-        }, 300);
-    }
-
-    function generateEmotionOptions(correctName) {
-        emot
+    // === INICIO ===
+    window.onload = () => {
+        loadRoutine('morning');
+        setTimeout(() => speechSynthesis.getVoices(), 500);
+    };
+</script>
+</body>
+</html>
