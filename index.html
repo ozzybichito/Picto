@@ -178,7 +178,7 @@
 </div>
 
 <script type="module">
-    // === DATOS LOCALES ===
+    // === DATOS LOCALES (100% offline) ===
     const ROUTINES_DATA = {
         morning: { title: "Reordena la Rutina de la Mañana (4 Pasos)", sequence: [{ emoji: '🛌', text: 'Despertar', value: 'despertar' }, { emoji: '🥣', text: 'Desayunar', value: 'desayunar' }, { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse' }, { emoji: '👕', text: 'Vestirse', value: 'vestirse' }] },
         night: { title: "Reordena la Rutina de la Noche (6 Pasos)", sequence: [{ emoji: '🍽️', text: 'Cenar', value: 'cenar' }, { emoji: '🛀', text: 'Bañarse', value: 'bañarse' }, { emoji: '👚', text: 'Ponerse el Pijama', value: 'pijama' }, { emoji: '🦷', text: 'Cepillarse los dientes', value: 'cepillarse_noche' }, { emoji: '📚', text: 'Leer un Cuento', value: 'cuento' }, { emoji: '😴', text: 'Dormir', value: 'dormir' }] },
@@ -217,7 +217,6 @@
         { name: 'Nervioso', emoji: '😬', color: 'yellow' }
     ];
 
-    // === ESCENARIOS LOCALES PARA MODO B ===
     const EMOTION_SCENARIOS = [
         { scenario: "Luis terminó su tarea y su mamá le dijo: ¡Muy bien, estoy orgullosa de ti!", primary: "Orgulloso", secondary: ["Feliz"] },
         { scenario: "María vio una araña gigante en el baño y gritó del susto.", primary: "Asustado", secondary: ["Nervioso"] },
@@ -393,7 +392,7 @@
         renderSequence();
     }
 
-    // === MODO B (100% LOCAL) ===
+    // === MODO B ===
     let currentTargetResponse = null;
 
     function requestNewScenario() {
@@ -417,111 +416,4 @@
     }
 
     function generateEmotionOptions(correctName) {
-        emotionOptionsGrid.innerHTML = '';
-        const correct = EMOTION_DATA.find(e => e.name === correctName);
-        if (!correct) return;
-        const incorrects = EMOTION_DATA.filter(e => e.name !== correctName);
-        const selectedIncorrect = shuffleArray(incorrects).slice(0, 3);
-        const options = shuffleArray([...selectedIncorrect, correct]);
-        options.forEach(emotion => {
-            const btn = document.createElement('button');
-            btn.className = 'emotion-option rounded-xl active:scale-[0.98] transition-transform';
-            btn.innerHTML = `<span class="text-5xl">${emotion.emoji}</span><span class="block mt-2 text-lg font-bold">${emotion.name}</span>`;
-            btn.addEventListener('click', () => handleEmotionSelection(emotion.name, btn));
-            emotionOptionsGrid.appendChild(btn);
-        });
-        nextEmotionButton.disabled = true;
-    }
-
-    function handleEmotionSelection(name, btn) {
-        if (isLocked) return;
-        isLocked = true;
-        document.querySelectorAll('.emotion-option').forEach(b => b.disabled = true);
-        const correct = currentTargetResponse.primary_emotion;
-        const secondary = currentTargetResponse.secondary_emotions || [];
-        let feedback = '', score = 0;
-        if (name === correct) {
-            btn.classList.add('emotion-primary');
-            score = PRIMARY_SCORE;
-            feedback = `¡Súper! 🌟 La emoción principal era ${correct}. Ganaste ${score} puntos.`;
-        } else if (secondary.includes(name)) {
-            btn.classList.add('emotion-secondary');
-            score = SECONDARY_SCORE;
-            feedback = `¡Bien! 👍 ${name} es una emoción cercana a la principal (${correct}). Ganaste ${score} punto.`;
-        } else {
-            btn.classList.add('emotion-incorrect');
-            document.querySelectorAll('.emotion-option').forEach(b => {
-                if (b.textContent.includes(correct)) b.classList.add('emotion-primary');
-            });
-            feedback = `Incorrecto. 😔 La emoción principal era ${correct}. Sigue practicando.`;
-        }
-        emotionScore += score;
-        localStorage.setItem(LOCAL_STORAGE_KEY, emotionScore.toString());
-        updateScoreDisplay();
-        showMessage(feedback, score > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800');
-        speakText(feedback);
-        nextEmotionButton.disabled = false;
-    }
-
-    function loadLocalScore() {
-        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-        emotionScore = saved ? parseInt(saved, 10) : 0;
-        updateScoreDisplay();
-    }
-
-    function updateScoreDisplay() {
-        localScoreDisplay.textContent = `${emotionScore} Puntos`;
-    }
-
-    function loadEmotionDetector() {
-        isLocked = true;
-        nextEmotionButton.disabled = true;
-        emotionOptionsGrid.innerHTML = '';
-        requestNewScenario();
-        loadLocalScore();
-    }
-
-    // === EVENTOS ===
-    modeAButton.addEventListener('click', () => switchMode('A'));
-    modeBButton.addEventListener('click', () => switchMode('B'));
-    routineSelectorEl.addEventListener('change', (e) => loadRoutine(e.target.value));
-    checkButton.addEventListener('click', checkSequence);
-    nextEmotionButton.addEventListener('click', loadEmotionDetector);
-    scenarioOutputBox.addEventListener('click', () => {
-        if (!isLocked && currentTargetResponse?.scenario) {
-            speakText(currentTargetResponse.scenario);
-        }
-    });
-
-    function switchMode(mode) {
-        if (currentMode === mode) return;
-        currentMode = mode;
-        speechSynthesis.cancel();
-        messageBox.classList.add('hidden');
-        if (mode === 'A') {
-            modeAContent.classList.remove('hidden');
-            modeBContent.classList.add('hidden');
-            modeAButton.classList.replace('text-gray-500', 'text-blue-600');
-            modeAButton.classList.replace('border-transparent', 'border-blue-600');
-            modeBButton.classList.replace('text-blue-600', 'text-gray-500');
-            modeBButton.classList.replace('border-blue-600', 'border-transparent');
-            loadRoutine(routineSelectorEl.value);
-        } else {
-            modeAContent.classList.add('hidden');
-            modeBContent.classList.remove('hidden');
-            modeBButton.classList.replace('text-gray-500', 'text-pink-600');
-            modeBButton.classList.replace('border-transparent', 'border-pink-600');
-            modeAButton.classList.replace('text-blue-600', 'text-gray-500');
-            modeAButton.classList.replace('border-blue-600', 'border-transparent');
-            loadEmotionDetector();
-        }
-    }
-
-    // === INICIO ===
-    window.onload = () => {
-        switchMode('A');
-        setTimeout(() => speechSynthesis.getVoices(), 500);
-    };
-</script>
-</body>
-</html>
+        emot
